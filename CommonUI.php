@@ -25,6 +25,11 @@ abstract class CommonUI
 	 */
 	abstract protected function markup() : string;
 
+	public function __construct(array $theme)
+	{
+		$this->theme = $theme;
+	}
+
 	/**
 	 * Use to return markup
 	 *
@@ -43,6 +48,11 @@ abstract class CommonUI
 	public function print()
 	{
 		echo $this->markup();
+	}
+
+	public function getTheme()
+	{
+		return $this->theme;
 	}
 
 	/**
