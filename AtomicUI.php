@@ -93,6 +93,30 @@ abstract class AtomicUI
 		return $this;
 	}
 
+	/**
+	 * Append atom's inner HTML
+	 *
+	 * @param string $content
+	 * @return $this
+	 */
+	public function appendContent(string $content)
+	{
+		$this->content = $this->content . $content;
+		return $this;
+	}
+
+	/**
+	 * Prepend atom's inner HTML
+	 *
+	 * @param string $content
+	 * @return $this
+	 */
+	public function prependContent(string $content)
+	{
+		$this->content = $content . $this->content;
+		return $this;
+	}
+
 
 	/**
 	 * ===========================
@@ -119,16 +143,24 @@ abstract class AtomicUI
 	/**
 	 * Get inline HTML attribute key-value
 	 *
-	 * @param string|null $name Name of attribute
+	 * @param string|array|null $arg (Array of) attribute name or null to get all attributes
 	 * @return string HTML attributes or empty
 	 */
-	protected function getInlineAttribute(string $name = null)
+	protected function getInlineAttribute($arg = null)
 	{
-		if (! is_null($name)) {
-			return $this->getSingleInlineAttribute($name);
+		if (is_string($arg)) {
+			return $this->getSingleInlineAttribute($arg);
 		}
 
 		$attributes = '';
+
+		if (is_array($arg)) {
+			foreach ($arg as $name) {
+				$attributes .= $this->getSingleInlineAttribute($name);
+			}
+
+			return $attributes;
+		}
 
 		foreach ( $this->attributes as $name => $value) {
 			$attributes .= $this->getSingleInlineAttribute($name);
@@ -160,7 +192,7 @@ abstract class AtomicUI
 		return $name === 'style' ? $this->getStyleString() 
 								 : (isset($this->attributes[$name]) ? $this->attributes[$name] : '');
 	}
-	
+
 	/**
 	 * Get DOM style attribute value without property name.
 	 * Use in $this->getStyleAttribute() and can also be used in $this->markup()
