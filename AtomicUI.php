@@ -4,64 +4,174 @@ namespace UIFactory\Component;
 
 abstract class AtomicUI
 {
+	/**
+	 * @var array Array of HTML style attribute values
+	 */
 	protected $styles = [];
-	protected $hoverStyles = [];
+
+	/**
+	 * @var array Array of HTML class attribute values
+	 */
 	protected $classes = [];
+
+	/**
+	 * @var string Prefix of HTML class attribute values
+	 */
 	protected $classPrefix = '';
+
+	/**
+	 * @var string Conjunction between HTML class attribute prefix and values
+	 */
 	protected $classPrefixConjunction = '-';
 
 	/**
+	 * @var string Atom's inner HTML
+	 */
+	protected $content = '';
+
+	/**
+	 * @var array HTML attributes
+	 */
+	protected $attributes = [
+		'style' => [],
+		'class' => ''
+	];
+
+	/**
+	 * Atom's HTML markup
 	 *
 	 * @return string HTML markup
 	 */
 	abstract protected function markup() : string;
 
+	/**
+	 * Use to return atom's markup
+	 *
+	 * @return string $this->markup()
+	 */
 	public function make()
 	{
 		return $this->markup();
 	}
 
+	/**
+	 * Echo atom's markup
+	 *
+	 * @return void
+	 */
 	public function print()
 	{
 		echo $this->markup();
 	}
 
+	/**
+	 * ===========================
+	 * Public chained methods
+	 * ===========================
+	 */
+	/**
+	 * Add class attribute value of DOM
+	 *
+	 * @param string $class
+	 * @return $this
+	 */
 	public function addClass(string $class)
 	{
 		$this->classes[] = $class;
+		return $this;
+	}
+
+	/**
+	 * Set atom's inner HTML
+	 *
+	 * @param string $content
+	 * @return $this
+	 */
+	public function content(string $content)
+	{
+		$this->content = $content;
+		return $this;
 	}
 
 
 	/**
+	 * ===========================
 	 * Helper methods
+	 * ===========================
 	 */
-	protected function getClassAttribute()
+	/**
+	 * Add HTML attributes to atom
+	 *
+	 * @param array $attributes Array of HTML attributes
+	 * @return $this
+	 */
+	public function addAttributes(array $attributes)
 	{
-		return 'class="' . $this->getClassAttributeValue() . '"';
-	}
-
-	protected function getStyleAttribute()
-	{
-		return 'style="' . $this->getStyleAttributeValue() . '"';
-	}
-
-	protected function getClassAttributeValue()
-	{
-		$classes = '';
-		$class_prefix_conjunction = empty($this->classPrefix) ? '' : $this->classPrefixConjunction;
-
-		foreach ( $this->classes as $class ) {
-			$classes .= $this->classPrefix .$class_prefix_conjunction . $class . ' ';
+		if (isset($attributes['style'])) {
+			$attributes['style'] = array_merge($this->attributes['style'], $attributes['style']);
 		}
 
-		return $classes;
+		$this->attributes = array_merge($this->attributes, $attributes);
+
+		return $this;
 	}
 
-	protected function getStyleAttributeValue()
+	/**
+	 * Get inline HTML attribute key-value
+	 *
+	 * @param string|null $name Name of attribute
+	 * @return string HTML attributes or empty
+	 */
+	protected function getInlineAttribute(string $name = null)
+	{
+		if (! is_null($name)) {
+			return $this->getSingleInlineAttribute($name);
+		}
+
+		$attributes = '';
+
+		foreach ( $this->attributes as $name => $value) {
+			$attributes .= $this->getSingleInlineAttribute($name);
+		}
+
+		return $attributes;
+	}
+
+	/**
+	 * Get inline HTML attribute key-value
+	 *
+	 * @param string $name Name of attribute
+	 * @return string HTML attributes or empty
+	 */
+	protected function getSingleInlineAttribute(string $name)
+	{
+		$value = $this->getInlineAttributeValue($name);
+		return empty($value) ? '' : $name . '="' . $value . '" ';
+	}
+
+	/**
+	 * Get atom's HTML attribute
+	 *
+	 * @param string $name Name of attribute
+	 * @return string Attribute value
+	 */
+	protected function getInlineAttributeValue(string $name)
+	{
+		return $name === 'style' ? $this->getStyleString() 
+								 : (isset($this->attributes[$name]) ? $this->attributes[$name] : '');
+	}
+	
+	/**
+	 * Get DOM style attribute value without property name.
+	 * Use in $this->getStyleAttribute() and can also be used in $this->markup()
+	 *
+	 * @return string Style attribute value
+	 */
+	protected function getStyleString()
 	{
 		$css = '';
 
-		foreach ( $this->styles as $prop => $value) {
+		foreach ( $this->attributes['style'] as $prop => $value) {
 			$css .= $prop . ':' . $value . ';';
 		}
 
