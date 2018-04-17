@@ -4,10 +4,10 @@ namespace UIFactory;
 
 use UIFactory\Component\AtomicUI;
 
-interface Factory
+abstract class Factory
 {
-	public function button() : AtomicUI;
-	// public function textField() : Atom\TextField;
-	// public function select() : Atom\Select;
-	// public function checkbox() : Atom\Checkbox;
+	abstract public function button() : AtomicUI;
+	// abstract public function textField() : Atom\TextField;
+	// abstract public function select() : Atom\Select;
+	// abstract public function checkbox() : Atom\Checkbox;
 }
