@@ -17,9 +17,9 @@ abstract class Factory
 		]
 	];
 
-	abstract public function button() : AtomicUI;
-	abstract public function form() : MolecularUI;
-	abstract public function textField() : AtomicUI;
+	abstract public function button(bool $echo = true) : AtomicUI;
+	abstract public function form(bool $echo = true) : MolecularUI;
+	abstract public function textField(bool $echo = true) : AtomicUI;
 	// abstract public function select() : Atom\Select;
 	// abstract public function checkbox() : Atom\Checkbox;
 
