@@ -12,6 +12,8 @@ abstract class CommonUI
 		'style' => [],
 		'class' => ''
 	];
+
+	protected $options = [];
 	
 	/**
 	 * @var string Atom's inner HTML
@@ -97,6 +99,16 @@ abstract class CommonUI
 	public function prependContent(string $content)
 	{
 		$this->content = $content . $this->content;
+		return $this;
+	}
+
+	public function option(string $name, $value = null)
+	{
+		if (is_null($value)) {
+			return $this->options[$name];
+		}
+
+		$this->options[$name] = $value;
 		return $this;
 	}
 
