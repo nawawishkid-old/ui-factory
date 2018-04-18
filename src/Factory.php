@@ -17,6 +17,8 @@ abstract class Factory
 	 */
 	protected $theme;
 
+	protected $libraryURIs = [];
+
 	abstract public function button($echo = true) : Atom;
 	abstract public function form($echo = true) : Molecule;
 	abstract public function textField($echo = true) : Atom;
@@ -53,5 +55,10 @@ abstract class Factory
 	{
 		$this->theme = $this->themes[$name];
 		return $this;
+	}
+
+	public function getLibraryURI($name)
+	{
+		return $this->libraryURIs[$name];
 	}
 }

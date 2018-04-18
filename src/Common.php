@@ -226,6 +226,10 @@ abstract class Common
 	 */
 	private function getCSSRuleString()
 	{
+		if (! isset($this->attributes['style'])) {
+			return '';
+		}
+
 		$css = '';
 
 		foreach ( $this->attributes['style'] as $prop => $value) {

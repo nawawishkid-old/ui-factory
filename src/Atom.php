@@ -17,7 +17,7 @@ abstract class Atom extends Common
 
 	public function __construct(Theme $theme, $echo = true)
 	{
-		$this->attributes['class'] = self::CSS_CLASS_PREFIX . $this->getComponentNameFromClass($this);
+		$this->addAttributes(['class' => self::CSS_CLASS_PREFIX . $this->getComponentNameFromClass($this)]);
 		parent::__construct($theme, $echo);
 	}
 }
