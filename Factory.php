@@ -17,9 +17,9 @@ abstract class Factory
 	 */
 	protected $theme;
 
-	abstract public function button(bool $echo = true) : AtomicUI;
-	abstract public function form(bool $echo = true) : MolecularUI;
-	abstract public function textField(bool $echo = true) : AtomicUI;
+	abstract public function button($echo = true) : AtomicUI;
+	abstract public function form($echo = true) : MolecularUI;
+	abstract public function textField($echo = true) : AtomicUI;
 	// abstract public function select() : Atom\Select;
 	// abstract public function checkbox() : Atom\Checkbox;
 
