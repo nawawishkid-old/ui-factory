@@ -18,17 +18,17 @@ abstract class MolecularUI extends CommonUI
 	 */
 	// abstract protected function markup() : string;
 
-	public function __construct(array $theme)
+	public function __construct(array $theme, bool $echo = true)
 	{
-		parent::__construct($theme);
-
 		$atoms = [];
 
 		foreach ($this->atoms as $name => $class) {
-			$atoms[$name] = new $class($theme);
+			$atoms[$name] = new $class($theme, false);
 		}
 
 		$this->atoms = $atoms;
+
+		parent::__construct($theme, $echo);
 	}
 
 	public function editAtom(string $name, callable $callback)

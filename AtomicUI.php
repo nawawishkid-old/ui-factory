@@ -16,9 +16,9 @@ abstract class AtomicUI extends CommonUI
 	 */
 	// abstract protected function markup() : string;
 
-	public function __construct(array $theme)
+	public function __construct(array $theme, bool $echo = true)
 	{
-		parent::__construct($theme);
+		parent::__construct($theme, $echo);
 	}
 
 	/**

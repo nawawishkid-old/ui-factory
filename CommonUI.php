@@ -25,9 +25,13 @@ abstract class CommonUI
 	 */
 	abstract protected function markup() : string;
 
-	public function __construct(array $theme)
+	public function __construct(array $theme, bool $echo = true)
 	{
 		$this->theme = $theme;
+
+		if ($echo) {
+			$this->print();
+		}
 	}
 
 	/**
