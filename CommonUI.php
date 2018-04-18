@@ -23,13 +23,22 @@ abstract class CommonUI
 	protected $content = '';
 
 	/**
-	 * HTML markup
+	 * HTML markup of this component
 	 *
 	 * @return string HTML markup
 	 */
 	abstract protected function markup() : string;
 
-	public function __construct(Theme $theme, bool $echo = true)
+	/**
+	 * Set theme and echo this component if requires
+	 *
+	 * @uses CommonUI::print() to echo component
+	 *
+	 * @param Theme $theme Theme instance
+	 * @param mixed $echo Echo the component immediately?
+	 * @return void
+	 */
+	public function __construct(Theme $theme, $echo = true)
 	{
 		$this->theme = $theme;
 
@@ -39,9 +48,11 @@ abstract class CommonUI
 	}
 
 	/**
-	 * Use to return markup
+	 * Return component markup
 	 *
-	 * @return string $this->markup()
+	 * @uses CommonUI::markup() to get component HTML markup
+	 *
+	 * @return string HTML markup
 	 */
 	public function make()
 	{
@@ -50,6 +61,8 @@ abstract class CommonUI
 
 	/**
 	 * Echo markup
+	 *
+	 * @uses CommonUI::markup() to get component HTML markup
 	 *
 	 * @return void
 	 */
@@ -64,15 +77,10 @@ abstract class CommonUI
 	}
 
 	/**
-	 * ===========================
-	 * Public chained methods
-	 * ===========================
-	 */
-	/**
-	 * Set atom's inner HTML
+	 * Set component's inner HTML
 	 *
-	 * @param string $content
-	 * @return $this
+	 * @param string $content Content to set
+	 * @return CommonUI
 	 */
 	public function content(string $content)
 	{
@@ -81,10 +89,10 @@ abstract class CommonUI
 	}
 
 	/**
-	 * Append atom's inner HTML
+	 * Append content to component's inner HTML by string concatenation
 	 *
-	 * @param string $content
-	 * @return $this
+	 * @param string $content Content to append
+	 * @return CommonUI
 	 */
 	public function appendContent(string $content)
 	{
@@ -93,10 +101,10 @@ abstract class CommonUI
 	}
 
 	/**
-	 * Prepend atom's inner HTML
+	 * Prepend component's inner HTML by string concatenation
 	 *
-	 * @param string $content
-	 * @return $this
+	 * @param string $content Content to prepend
+	 * @return CommonUI
 	 */
 	public function prependContent(string $content)
 	{
@@ -114,17 +122,11 @@ abstract class CommonUI
 		return $this;
 	}
 
-
 	/**
-	 * ===========================
-	 * Helper methods
-	 * ===========================
-	 */
-	/**
-	 * Add HTML attributes to atom
+	 * Add HTML attributes to component
 	 *
-	 * @param array $attributes Array of HTML attributes
-	 * @return $this
+	 * @param array $attributes Array of HTML attributes e.g. ['class' => 'my-class']
+	 * @return CommonUI
 	 */
 	public function addAttributes(array $attributes)
 	{
@@ -141,10 +143,12 @@ abstract class CommonUI
 	}
 
 	/**
-	 * Get inline HTML attribute key-value
+	 * Get inline HTML attribute key-value e.g. style="background:red;"
 	 *
-	 * @param string|array|null $arg (Array of) attribute name or null to get all attributes
-	 * @return string HTML attributes or empty
+	 * @uses CommonUI::getSingleInlineAttribute() to get one inline attribute
+	 *
+	 * @param string|array|null $arg (Array of) attribute name, or null to get all attributes
+	 * @return string HTML attributes or empty string
 	 */
 	protected function getInlineAttribute($arg = null)
 	{
@@ -170,36 +174,40 @@ abstract class CommonUI
 	}
 
 	/**
-	 * Get inline HTML attribute key-value
+	 * Get inline HTML attribute key-value e.g. style="color:red;"
+	 *
+	 * @uses CommonUI::getAttributeValue() to get only attribute value, not key-value pair
 	 *
 	 * @param string $name Name of attribute
 	 * @return string HTML attributes or empty
 	 */
 	private function getSingleInlineAttribute(string $name)
 	{
-		$value = $this->getInlineAttributeValue($name);
+		$value = $this->getAttributeValue($name);
 		return empty($value) ? '' : $name . '="' . $value . '" ';
 	}
 
 	/**
-	 * Get atom's HTML attribute
+	 * Get component's HTML attribute
+	 *
+	 * @uses CommonUI::getCSSRuleString() e.g. 'color:red;'
 	 *
 	 * @param string $name Name of attribute
-	 * @return string Attribute value
+	 * @return string Attribute value or empty string
 	 */
-	private function getInlineAttributeValue(string $name)
+	private function getAttributeValue(string $name)
 	{
-		return $name === 'style' ? $this->getStyleString() 
+		return $name === 'style' ? $this->getCSSRuleString() 
 								 : (isset($this->attributes[$name]) ? $this->attributes[$name] : '');
 	}
 
 	/**
-	 * Get DOM style attribute value without property name.
-	 * Use in $this->getStyleAttribute() and can also be used in $this->markup()
+	 * Get CSS rule string e.g. 'color:red;'
+	 * Can be used in $this->markup()
 	 *
-	 * @return string Style attribute value
+	 * @return string CSS rule
 	 */
-	private function getStyleString()
+	private function getCSSRuleString()
 	{
 		$css = '';
 

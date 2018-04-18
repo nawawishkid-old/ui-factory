@@ -20,7 +20,7 @@ abstract class MolecularUI extends CommonUI
 	 */
 	// abstract protected function markup() : string;
 
-	public function __construct(Theme $theme, bool $echo = true)
+	public function __construct(Theme $theme, $echo = true)
 	{
 		$atoms = [];
 

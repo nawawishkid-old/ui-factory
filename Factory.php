@@ -7,8 +7,15 @@ use UIFactory\Component\MolecularUI;
 
 abstract class Factory
 {
+	/**
+	 * @var array $themes List of available themes
+	 */
 	protected $themes = [];
-	protected $theme = null;
+
+	/**
+	 * @var array $theme Current theme
+	 */
+	protected $theme;
 
 	abstract public function button(bool $echo = true) : AtomicUI;
 	abstract public function form(bool $echo = true) : MolecularUI;
@@ -16,7 +23,16 @@ abstract class Factory
 	// abstract public function select() : Atom\Select;
 	// abstract public function checkbox() : Atom\Checkbox;
 
-	public function addTheme(Theme $theme, bool $use = false)
+	/**
+	 * Add theme to the factory to immediately use it or just storing
+	 *
+	 * @uses Factory::useTheme() to use the given theme immediately
+	 *
+	 * @param Theme $theme Theme instance to add
+	 * @param mixed $use Use the added theme immediately?
+	 * @return Factory
+	 */
+	public function addTheme(Theme $theme, $use = false)
 	{
 		$this->themes[$theme->name] = $theme;
 
@@ -27,6 +43,12 @@ abstract class Factory
 		return $this;
 	}
 
+	/**
+	 * Use one of available theme by giving it a name
+	 *
+	 * @param string $name Available theme name
+	 * @return Factory
+	 */
 	public function useTheme(string $name)
 	{
 		$this->theme = $this->themes[$name];
