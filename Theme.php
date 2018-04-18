@@ -6,44 +6,73 @@ use Exception;
 
 class Theme
 {
+	/**
+	 * @var string $name Theme name
+	 */
 	protected $name = '';
-	protected $colors = [];
-	protected $spacings = [];
-	protected $configs = [
-		'auto_contrast_color' => true
-	];
 
+	/**
+	 * @var array $colors Theme color scheme
+	 */
+	protected $colors = [];
+
+	/**
+	 * @var array $spacings Theme spacing value e.g. padding, margin
+	 */
+	protected $spacings = [];
+
+	/**
+	 * Set theme name
+	 *
+	 * @param string $name Theme name
+	 * @return void
+	 */
 	public function __construct(string $name)
 	{
 		$this->name = $name;
 	}
 
+	/**
+	 * Get magic method
+	 */
 	public function __get($name)
 	{
 		return $this->{$name};
 	}
 
-	public function config(string $name, $value)
-	{
-		$this->configs[$name] = $value;
-	}
-
 	/**
 	 * Set/get color
 	 *
-	 * @param string|array $arg If string, get color. If array, set color.
-	 * @return $this|string If set, return $this. If get, return color value.
+	 * @uses Theme::value() to retrieve the value of specified property name
+	 *
+	 * @param string|array $arg Give string name to get value, array to set.
+	 * @return Theme|string If set value, return $this. If get value, return string
 	 */
 	public function color($arg)
 	{
 		return $this->value('colors', $arg);
 	}
 
+	/**
+	 * Set/get spacing
+	 *
+	 * @uses Theme::value() to retrieve the value of specified property name
+	 *
+	 * @param string|array $arg Give string name to get value, array to set.
+	 * @return Theme|string If set value, return $this. If get value, return string
+	 */
 	public function spacing($arg)
 	{
 		return $this->value('spacings', $arg);
 	}
 
+	/**
+	 * Set/get theme property
+	 *
+	 * @param string $prop_name Property name you want to get or set
+	 * @param string|array $arg Use string to get value, array to set e.g. ['name' => 'value']
+	 * @return Theme|string If set value, return $this. If get value, return string
+	 */
 	protected function value(string $prop_name, $arg)
 	{
 		if (! in_array($prop_name, array_keys(get_class_vars(self::class)))) {
@@ -63,7 +92,19 @@ class Theme
 		return $this;
 	}
 
-	public function getContrastColor(string $color_name, $bw = false)
+	/**
+	 * Get inverted color of specified color name in Theme::$colors
+	 *
+	 * @uses Theme::getColorType() to get color type
+	 * @uses Theme::convertColorHEXtoRGB() to convert HEX to RGB array
+	 * @uses Theme::RGBToArray() to convert RGB string to array
+	 * @uses Theme::invertRGBColor() to actually invert color
+	 *
+	 * @param string $color_name Name of color
+	 * @param mixed $bw If you want the inverted color to be either black or white, set to true
+	 * @return string The inverted color
+	 */
+	public function getInvertedColor(string $color_name, $bw = false)
 	{
 		$color = $this->colors[$color_name];
 		$color_type = $this->getColorType($color);
@@ -79,6 +120,12 @@ class Theme
 		return $this->invertRGBColor($rgb_array, $bw);
 	}
 
+	/**
+	 * Get color type (hex or rgb)
+	 *
+	 * @param string $color Color e.g. #ffffff, rgb(255,255,255)
+	 * @return string|bool Color type i.e. 'hex', 'rgb' or false if color not supported
+	 */
 	protected function getColorType(string $color)
 	{
 		if (preg_match('/^#[\da-fA-F]{3,6}$/', $color)) {
@@ -90,16 +137,25 @@ class Theme
 		return false;
 	}
 
+	/**
+	 * Convert RGB string e.g. 'rgb(0,0,0)' to array
+	 *
+	 * @param string $rgb RGB string
+	 * @return array RGB array
+	 */
 	protected function RGBToArray($rgb)
 	{
 		return sscanf($rgb, 'rgb(%d,%d,%d)');
 	}
 
 	/**
+	 * Convert HEX color string to RGB string or array
 	 *
+	 * @see https://stackoverflow.com/questions/15202079/convert-hex-color-to-rgb-values-in-php
 	 *
-	 * @link https://stackoverflow.com/questions/15202079/convert-hex-color-to-rgb-values-in-php
-	 * @link http://php.net/manual/en/function.sscanf.php
+	 * @param string $hex HEX color string
+	 * @param bool $to_array Convert to array or not
+	 * @return string|array RGB string or array
 	 */
 	public function convertColorHEXtoRGB(string $hex, $to_array = false)
 	{
@@ -113,9 +169,14 @@ class Theme
 	}
 
 	/**
-	 *
+	 * Invert RGB color from specified color to its complementary color
+	 * or either black or white
 	 *
 	 * @see https://stackoverflow.com/questions/35969656/how-can-i-generate-the-opposite-color-according-to-current-color
+	 * 
+	 * @param array $rgb RGB array e.g. [255,255,255]
+	 * @param mixed $bw Convert to either black or white
+	 * @return string Hex color
 	 */
 	protected function invertRGBColor(array $rgb, $bw = false)
 	{
