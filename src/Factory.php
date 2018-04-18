@@ -10,14 +10,14 @@ abstract class Factory
 {
 	use ComponentDirector;
 
+	protected $atoms = [];
+	protected $molecules = [];
+	protected $organisms = [];
+
 	/**
 	 * @var array $themes List of available themes
 	 */
 	protected $themes = [];
-
-	protected $atoms = [];
-	protected $molecules = [];
-	protected $organisms = [];
 
 	/**
 	 * @var array $theme Current theme
@@ -29,6 +29,12 @@ abstract class Factory
 	abstract public function textField($echo = true) : Atom;
 	// abstract public function select() : Atom\Select;
 	// abstract public function checkbox() : Atom\Checkbox;
+
+	public function __construct()
+	{
+		$this->initComponentList('atom');
+		$this->initComponentList('molecule');
+	}
 
 	/**
 	 * Add theme to the factory to immediately use it or just storing

@@ -25,15 +25,16 @@ abstract class Molecule extends Common
 
 	public function __construct(Theme $theme, $echo = true)
 	{
+		$this->initComponentList('atom');
 		$this->attributes['class'] = self::CSS_CLASS_PREFIX . $this->getComponentNameFromClass($this);
 
-		$atoms = [];
+		// $atoms = [];
 
-		foreach ($this->atoms as $name => $class) {
-			$atoms[$name] = new $class($theme, false);
-		}
+		// foreach ($this->atoms as $name => $class) {
+		// 	$atoms[$name] = new $class($theme, false);
+		// }
 
-		$this->atoms = $atoms;
+		// $this->atoms = $atoms;
 
 		parent::__construct($theme, $echo);
 	}
