@@ -2,6 +2,8 @@
 
 namespace UIFactory\Component;
 
+use UIFactory\Theme;
+
 abstract class CommonUI
 {
 
@@ -27,7 +29,7 @@ abstract class CommonUI
 	 */
 	abstract protected function markup() : string;
 
-	public function __construct(array $theme, bool $echo = true)
+	public function __construct(Theme $theme, bool $echo = true)
 	{
 		$this->theme = $theme;
 

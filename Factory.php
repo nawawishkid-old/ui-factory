@@ -8,14 +8,7 @@ use UIFactory\Component\MolecularUI;
 abstract class Factory
 {
 	protected $themes = [];
-	protected $currentTheme = '';
-	protected $theme = [
-		'colors' => [
-			'primary' => '',
-			'secondary' => '',
-			'accent' => ''
-		]
-	];
+	protected $theme = null;
 
 	abstract public function button(bool $echo = true) : AtomicUI;
 	abstract public function form(bool $echo = true) : MolecularUI;
@@ -23,12 +16,12 @@ abstract class Factory
 	// abstract public function select() : Atom\Select;
 	// abstract public function checkbox() : Atom\Checkbox;
 
-	public function addTheme(string $name, array $theme, $use = false)
+	public function addTheme(Theme $theme, bool $use = false)
 	{
-		$this->themes[$name] = $theme;
+		$this->themes[$theme->name] = $theme;
 
 		if ($use) {
-			$this->useTheme($name);
+			$this->useTheme($theme->name);
 		}
 
 		return $this;

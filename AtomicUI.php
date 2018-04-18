@@ -2,6 +2,8 @@
 
 namespace UIFactory\Component;
 
+use UIFactory\Theme;
+
 abstract class AtomicUI extends CommonUI
 {
 	/**
@@ -16,7 +18,7 @@ abstract class AtomicUI extends CommonUI
 	 */
 	// abstract protected function markup() : string;
 
-	public function __construct(array $theme, bool $echo = true)
+	public function __construct(Theme $theme, bool $echo = true)
 	{
 		parent::__construct($theme, $echo);
 	}

@@ -2,6 +2,8 @@
 
 namespace UIFactory\Component;
 
+use UIFactory\Theme;
+
 abstract class MolecularUI extends CommonUI
 {
 	/**
@@ -18,7 +20,7 @@ abstract class MolecularUI extends CommonUI
 	 */
 	// abstract protected function markup() : string;
 
-	public function __construct(array $theme, bool $echo = true)
+	public function __construct(Theme $theme, bool $echo = true)
 	{
 		$atoms = [];
 
