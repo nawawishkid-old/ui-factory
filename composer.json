@@ -1,0 +1,24 @@
+{
+	"name": "nawawishkid/ui-factory",
+	"type": "library",
+    "description": "PHP user interface design system",
+    "keywords": ["user interface","UI","design system"],
+    "homepage": "https://github.com/nawawishkid/ui-factory",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Nawawish Samerpark",
+            "email": "nawawish.samerpark@gmail.com",
+            "homepage": "http://nawawish.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=7.0"
+    },
+    "autoload": {
+        "psr-0": {
+            "UIFactory": "src"
+        }
+    }
+}
