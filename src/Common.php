@@ -3,9 +3,11 @@
 namespace UIFactory\Component;
 
 use UIFactory\Theme;
+use UIFactory\Helper\ComponentDirector;
 
 abstract class Common
 {
+	use ComponentDirector;
 
 	/**
 	 * @var array HTML attributes
@@ -131,15 +133,30 @@ abstract class Common
 	public function addAttributes(array $attributes)
 	{
 		if (isset($attributes['style'])) {
-			$default_style = isset($this->attributes['style']) ? $this->attributes['style'] : [];
-			$default_style = is_array($default_style) ? $default_style : [];
+			$attributes['style'] = $this->mergeStyleAttributes($attributes['style']);
+		}
 
-			$attributes['style'] = array_merge($default_style, $attributes['style']);
+		if (isset($attributes['class'])) {
+			$attributes['class'] = $this->concatClassAttributes($attributes['class']);
 		}
 
 		$this->attributes = array_merge($this->attributes, $attributes);
 
 		return $this;
+	}
+
+	protected function mergeStyleAttributes(array $style)
+	{
+		$default_style = isset($this->attributes['style']) ? $this->attributes['style'] : [];
+		$default_style = is_array($default_style) ? $default_style : [];
+
+		return array_merge($default_style, $style);
+	}
+
+	protected function concatClassAttributes(string $class)
+	{
+		$default_class = isset($this->attributes['class']) ? $this->attributes['class'] : '';
+		return $default_class . ' ' . $class;
 	}
 
 	/**

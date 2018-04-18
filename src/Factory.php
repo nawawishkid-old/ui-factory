@@ -4,13 +4,20 @@ namespace UIFactory;
 
 use UIFactory\Component\Atom;
 use UIFactory\Component\Molecule;
+use UIFactory\Helper\ComponentDirector;
 
 abstract class Factory
 {
+	use ComponentDirector;
+
 	/**
 	 * @var array $themes List of available themes
 	 */
 	protected $themes = [];
+
+	protected $atoms = [];
+	protected $molecules = [];
+	protected $organisms = [];
 
 	/**
 	 * @var array $theme Current theme
@@ -52,6 +59,28 @@ abstract class Factory
 	public function useTheme(string $name)
 	{
 		$this->theme = $this->themes[$name];
+		return $this;
+	}
+
+	public function atom(string $name, $echo = true)
+	{
+		return $this->getComponent('atom', $name, $echo);
+	}
+
+	public function molecule(string $name, $echo = true)
+	{
+		return $this->getComponent('molecule', $name, $echo);
+	}
+
+	public function addAtom(Atom $atom)
+	{
+		$this->addComponent('atom', $atom);
+		return $this;
+	}
+
+	public function addMolecule(Molecule $molecule)
+	{
+		$this->addComponent('molecule', $molecule);
 		return $this;
 	}
 }

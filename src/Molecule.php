@@ -6,6 +6,9 @@ use UIFactory\Theme;
 
 abstract class Molecule extends Common
 {
+	const CSS_CLASS_PREFIX = 'uif-m-';
+
+	protected $componentID;
 	/**
 	 * Array of atom ['name' => AtomClass::class] inside this molecule
 	 *
@@ -22,6 +25,8 @@ abstract class Molecule extends Common
 
 	public function __construct(Theme $theme, $echo = true)
 	{
+		$this->attributes['class'] = self::CSS_CLASS_PREFIX . $this->getComponentNameFromClass($this);
+
 		$atoms = [];
 
 		foreach ($this->atoms as $name => $class) {
@@ -35,8 +40,16 @@ abstract class Molecule extends Common
 
 	public function editAtom(string $name, callable $callback)
 	{
-		$this->atoms[$name] = call_user_func_array($callback, [$this->atoms[$name]]);
+		$this->editComponent('atom', $name, $callback);
 		return $this;
+		// $this->atoms[$name] = call_user_func_array($callback, [$this->atoms[$name]]);
+		// return $this;
+	}
+
+	public function atom(string $name, $make = true)
+	{
+		$atom = $this->getComponent('atom', $name, false);
+		return $make ? $atom->make() : $atom;
 	}
 
 	protected function getAtom($atom_name = null, $make = true)
