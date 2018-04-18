@@ -4,7 +4,7 @@ namespace UIFactory\Component;
 
 use UIFactory\Theme;
 
-abstract class MolecularUI extends CommonUI
+abstract class Molecule extends Common
 {
 	/**
 	 * Array of atom ['name' => AtomClass::class] inside this molecule
@@ -67,7 +67,7 @@ abstract class MolecularUI extends CommonUI
 		$atom = $this->atoms[$atom_name];
 		$atom = isset($atom) ? $atom : null;
 
-		return $atom instanceof AtomicUI ? ($make === true ? $atom->make() : $atom)
+		return $atom instanceof Atom ? ($make === true ? $atom->make() : $atom)
 										 : $atom;
 	}
 }

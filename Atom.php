@@ -4,7 +4,7 @@ namespace UIFactory\Component;
 
 use UIFactory\Theme;
 
-abstract class AtomicUI extends CommonUI
+abstract class Atom extends Common
 {
 	/**
 	 * Component's HTML markup

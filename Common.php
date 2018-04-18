@@ -4,7 +4,7 @@ namespace UIFactory\Component;
 
 use UIFactory\Theme;
 
-abstract class CommonUI
+abstract class Common
 {
 
 	/**
@@ -32,7 +32,7 @@ abstract class CommonUI
 	/**
 	 * Set theme and echo this component if requires
 	 *
-	 * @uses CommonUI::print() to echo component
+	 * @uses Common::print() to echo component
 	 *
 	 * @param Theme $theme Theme instance
 	 * @param mixed $echo Echo the component immediately?
@@ -50,7 +50,7 @@ abstract class CommonUI
 	/**
 	 * Return component markup
 	 *
-	 * @uses CommonUI::markup() to get component HTML markup
+	 * @uses Common::markup() to get component HTML markup
 	 *
 	 * @return string HTML markup
 	 */
@@ -62,7 +62,7 @@ abstract class CommonUI
 	/**
 	 * Echo markup
 	 *
-	 * @uses CommonUI::markup() to get component HTML markup
+	 * @uses Common::markup() to get component HTML markup
 	 *
 	 * @return void
 	 */
@@ -80,7 +80,7 @@ abstract class CommonUI
 	 * Set component's inner HTML
 	 *
 	 * @param string $content Content to set
-	 * @return CommonUI
+	 * @return Common
 	 */
 	public function content(string $content)
 	{
@@ -92,7 +92,7 @@ abstract class CommonUI
 	 * Append content to component's inner HTML by string concatenation
 	 *
 	 * @param string $content Content to append
-	 * @return CommonUI
+	 * @return Common
 	 */
 	public function appendContent(string $content)
 	{
@@ -104,7 +104,7 @@ abstract class CommonUI
 	 * Prepend component's inner HTML by string concatenation
 	 *
 	 * @param string $content Content to prepend
-	 * @return CommonUI
+	 * @return Common
 	 */
 	public function prependContent(string $content)
 	{
@@ -126,7 +126,7 @@ abstract class CommonUI
 	 * Add HTML attributes to component
 	 *
 	 * @param array $attributes Array of HTML attributes e.g. ['class' => 'my-class']
-	 * @return CommonUI
+	 * @return Common
 	 */
 	public function addAttributes(array $attributes)
 	{
@@ -145,7 +145,7 @@ abstract class CommonUI
 	/**
 	 * Get inline HTML attribute key-value e.g. style="background:red;"
 	 *
-	 * @uses CommonUI::getSingleInlineAttribute() to get one inline attribute
+	 * @uses Common::getSingleInlineAttribute() to get one inline attribute
 	 *
 	 * @param string|array|null $arg (Array of) attribute name, or null to get all attributes
 	 * @return string HTML attributes or empty string
@@ -176,7 +176,7 @@ abstract class CommonUI
 	/**
 	 * Get inline HTML attribute key-value e.g. style="color:red;"
 	 *
-	 * @uses CommonUI::getAttributeValue() to get only attribute value, not key-value pair
+	 * @uses Common::getAttributeValue() to get only attribute value, not key-value pair
 	 *
 	 * @param string $name Name of attribute
 	 * @return string HTML attributes or empty
@@ -190,7 +190,7 @@ abstract class CommonUI
 	/**
 	 * Get component's HTML attribute
 	 *
-	 * @uses CommonUI::getCSSRuleString() e.g. 'color:red;'
+	 * @uses Common::getCSSRuleString() e.g. 'color:red;'
 	 *
 	 * @param string $name Name of attribute
 	 * @return string Attribute value or empty string
