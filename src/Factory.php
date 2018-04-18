@@ -2,8 +2,8 @@
 
 namespace UIFactory;
 
-use UIFactory\Component\AtomicUI;
-use UIFactory\Component\MolecularUI;
+use UIFactory\Component\Atom;
+use UIFactory\Component\Molecule;
 
 abstract class Factory
 {
@@ -17,9 +17,9 @@ abstract class Factory
 	 */
 	protected $theme;
 
-	abstract public function button($echo = true) : AtomicUI;
-	abstract public function form($echo = true) : MolecularUI;
-	abstract public function textField($echo = true) : AtomicUI;
+	abstract public function button($echo = true) : Atom;
+	abstract public function form($echo = true) : Molecule;
+	abstract public function textField($echo = true) : Atom;
 	// abstract public function select() : Atom\Select;
 	// abstract public function checkbox() : Atom\Checkbox;
 
