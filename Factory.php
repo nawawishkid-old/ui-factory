@@ -23,13 +23,20 @@ abstract class Factory
 	// abstract public function select() : Atom\Select;
 	// abstract public function checkbox() : Atom\Checkbox;
 
-	public function addTheme(string $name, array $theme)
+	public function addTheme(string $name, array $theme, $use = false)
 	{
 		$this->themes[$name] = $theme;
+
+		if ($use) {
+			$this->useTheme($name);
+		}
+
+		return $this;
 	}
 
 	public function useTheme(string $name)
 	{
 		$this->theme = $this->themes[$name];
+		return $this;
 	}
 }

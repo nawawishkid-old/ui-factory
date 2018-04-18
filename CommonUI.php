@@ -127,7 +127,10 @@ abstract class CommonUI
 	public function addAttributes(array $attributes)
 	{
 		if (isset($attributes['style'])) {
-			$attributes['style'] = array_merge($this->attributes['style'], $attributes['style']);
+			$default_style = isset($this->attributes['style']) ? $this->attributes['style'] : [];
+			$default_style = is_array($default_style) ? $default_style : [];
+
+			$attributes['style'] = array_merge($default_style, $attributes['style']);
 		}
 
 		$this->attributes = array_merge($this->attributes, $attributes);
