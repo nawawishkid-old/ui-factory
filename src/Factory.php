@@ -61,4 +61,17 @@ abstract class Factory
 	{
 		return $this->libraryURIs[$name];
 	}
+
+	public function script($src, $include = false)
+	{
+		if ($include) {
+			echo '<script>';
+			include $src;
+			echo '</script>';
+
+			return;
+		}
+
+		echo '<script src="' . $src . '"></script>';
+	}
 }

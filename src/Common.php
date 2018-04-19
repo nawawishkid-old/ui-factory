@@ -172,7 +172,7 @@ abstract class Common
 			if (! in_array($opt, $option_name)) {
 				$name = $this->getComponentNameFromClass($this);
 
-				throw new Exception("Component '$name' requires option '$opt' to display.");
+				throw new Exception("Component '$name' requires option '$opt'.");
 				
 			}
 		}
