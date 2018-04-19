@@ -17,6 +17,8 @@ abstract class Common
 		'class' => ''
 	];
 
+	protected $requiredAttributes = [];
+
 	protected $options = [];
 	
 	/**
@@ -40,25 +42,18 @@ abstract class Common
 	 * @param mixed $echo Echo the component immediately?
 	 * @return void
 	 */
-	public function __construct(Theme $theme, $echo = true)
+	public function __construct(Theme $theme, $echo = 1)
 	{
 		$this->theme = $theme;
 
 		if ($echo) {
-			$this->print();
+			$this->print($echo);
 		}
 	}
 
-	/**
-	 * Return component markup
-	 *
-	 * @uses Common::markup() to get component HTML markup
-	 *
-	 * @return string HTML markup
-	 */
-	public function make()
+	public function get($amount = 1)
 	{
-		return $this->markup();
+		return $this->getHTML($amount);
 	}
 
 	/**
@@ -68,9 +63,47 @@ abstract class Common
 	 *
 	 * @return void
 	 */
-	public function print()
+	public function print($amount = 1)
 	{
-		echo $this->markup();
+		echo $this->getHTML($amount);
+	}
+
+	public function getHTML($amount = 1)
+	{
+		if (! isset($this->html) || empty($this->html)) {
+			$this->make($amount);
+		}
+
+		return $this->html;
+	}
+
+	/**
+	 * Return component markup
+	 *
+	 * @uses Common::markup() to get component HTML markup
+	 *
+	 * @return string HTML markup
+	 */
+	public function make($amount = 1)
+	{
+		if ($amount > 1) {
+			$this->makeMultiple($amount);
+		} elseif ($amount === 1) {
+			$this->html = $this->markup();
+		}
+
+		return $this;
+	}
+
+	protected function makeMultiple(int $amount)
+	{
+		$markups = '';
+
+		foreach (range(1, $amount) as $index) {
+			$markups .= $this->markup();
+		}
+
+		$this->html = $markups;
 	}
 
 	public function getTheme()
@@ -212,10 +245,11 @@ abstract class Common
 	 * @param string $name Name of attribute
 	 * @return string Attribute value or empty string
 	 */
-	private function getAttributeValue(string $name)
+	protected function getAttributeValue(string $name)
 	{
-		return $name === 'style' ? $this->getCSSRuleString() 
-								 : (isset($this->attributes[$name]) ? $this->attributes[$name] : '');
+		return $name === 'style' 
+						? $this->getCSSRuleString() 
+						: (isset($this->attributes[$name]) ? $this->attributes[$name] : '');
 	}
 
 	/**
