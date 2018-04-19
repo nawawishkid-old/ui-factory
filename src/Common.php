@@ -2,6 +2,7 @@
 
 namespace UIFactory\Component;
 
+use Exception;
 use UIFactory\Theme;
 use UIFactory\Helper\ComponentDirector;
 
@@ -17,9 +18,9 @@ abstract class Common
 		'class' => ''
 	];
 
-	protected $requiredAttributes = [];
-
 	protected $options = [];
+
+	protected $requiredOptions = [];
 	
 	/**
 	 * @var string Atom's inner HTML
@@ -86,6 +87,8 @@ abstract class Common
 	 */
 	public function make($amount = 1)
 	{
+		$this->qualifyOptions();
+
 		if ($amount > 1) {
 			$this->makeMultiple($amount);
 		} elseif ($amount === 1) {
@@ -153,7 +156,7 @@ abstract class Common
 			foreach ($opt as $key => $value) {
 				$this->options[$key] = $value;
 			}
-			
+
 			return $this;
 		}
 
@@ -163,6 +166,20 @@ abstract class Common
 
 		$this->options[$opt] = $value;
 		return $this;
+	}
+
+	protected function qualifyOptions()
+	{
+		$option_name = array_keys($this->options);
+
+		foreach ($this->requiredOptions as $opt) {
+			if (! in_array($opt, $option_name)) {
+				$name = $this->getComponentNameFromClass($this);
+
+				throw new Exception("Component '$name' requires option '$opt' to display.");
+				
+			}
+		}
 	}
 
 	/**
