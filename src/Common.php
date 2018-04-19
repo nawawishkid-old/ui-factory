@@ -151,23 +151,17 @@ abstract class Common
 		return $this;
 	}
 
-	public function option($opt, $value = null)
+	public function option($opt, $default = '')
 	{
 		if (is_array($opt)) {
 			$this->options = array_merge($this->options, $opt);
-			// foreach ($opt as $key => $value) {
-			// 	$this->options[$key] = $value;
-			// }
 
 			return $this;
 		}
 
-		if (is_null($value)) {
-			return isset($this->options[$opt]) ? $this->options[$opt] : '';
-		}
-
-		$this->options[$opt] = $value;
-		return $this;
+		return isset($this->options[$opt]) 
+					? $this->options[$opt] 
+					: $default;
 	}
 
 	protected function qualifyOptions()
