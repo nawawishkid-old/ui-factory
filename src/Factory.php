@@ -19,9 +19,9 @@ abstract class Factory
 
 	protected $libraryURIs = [];
 
-	abstract public function button(array $options = [], $echo = 1) : Atom;
-	abstract public function form(array $options = [], $echo = 1) : Molecule;
-	abstract public function textField(array $options = [], $echo = 1) : Atom;
+	abstract public function button(array $props = [], $echo = 1) : Atom;
+	abstract public function form(array $props = [], $echo = 1) : Molecule;
+	abstract public function textField(array $props = [], $echo = 1) : Atom;
 	// abstract public function select() : Atom\Select;
 	// abstract public function checkbox() : Atom\Checkbox;
 

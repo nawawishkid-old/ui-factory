@@ -23,7 +23,7 @@ abstract class Molecule extends Common
 	 */
 	// abstract protected function markup() : string;
 
-	public function __construct(array $options = [], Theme $theme = null, $echo = 1)
+	public function __construct(array $props = [], Theme $theme = null, $echo = 1)
 	{
 		$this->initComponentList('atom');
 		$this->attributes['class'] = self::CSS_CLASS_PREFIX . $this->getComponentNameFromClass($this);
@@ -36,7 +36,7 @@ abstract class Molecule extends Common
 
 		// $this->atoms = $atoms;
 
-		parent::__construct($options, $theme, $echo);
+		parent::__construct($props, $theme, $echo);
 	}
 
 	public function editAtom(string $name, callable $callback)

@@ -15,9 +15,9 @@ abstract class Atom extends Common
 	 */
 	// abstract protected function markup() : string;
 
-	public function __construct(array $options = [], Theme $theme = null, $echo = 1)
+	public function __construct(array $props = [], Theme $theme = null, $echo = 1)
 	{
 		$this->addAttributes(['class' => self::CSS_CLASS_PREFIX . $this->getComponentNameFromClass($this)]);
-		parent::__construct($options, $theme, $echo);
+		parent::__construct($props, $theme, $echo);
 	}
 }

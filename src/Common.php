@@ -18,9 +18,9 @@ abstract class Common
 		'class' => ''
 	];
 
-	protected $options = [];
+	protected $props = [];
 
-	protected $requiredOptions = [];
+	protected $requiredProps = [];
 	
 	/**
 	 * @var string Atom's inner HTML
@@ -43,10 +43,10 @@ abstract class Common
 	 * @param mixed $echo Echo the component immediately?
 	 * @return void
 	 */
-	public function __construct(array $options = [], Theme $theme = null, $echo = 1)
+	public function __construct(array $props = [], Theme $theme = null, $echo = 1)
 	{
 		$this->theme = $theme;
-		$this->option($options);
+		$this->prop($props);
 
 		if ($echo) {
 			$this->print($echo);
@@ -151,28 +151,28 @@ abstract class Common
 		return $this;
 	}
 
-	public function option($opt, $default = '')
+	public function prop($opt, $default = '')
 	{
 		if (is_array($opt)) {
-			$this->options = array_merge($this->options, $opt);
+			$this->props = array_merge($this->props, $opt);
 
 			return $this;
 		}
 
-		return isset($this->options[$opt]) 
-					? $this->options[$opt] 
+		return isset($this->props[$opt]) 
+					? $this->props[$opt] 
 					: $default;
 	}
 
 	protected function qualifyOptions()
 	{
-		$option_name = array_keys($this->options);
+		$prop_name = array_keys($this->props);
 
-		foreach ($this->requiredOptions as $opt) {
-			if (! in_array($opt, $option_name)) {
+		foreach ($this->requiredProps as $opt) {
+			if (! in_array($opt, $prop_name)) {
 				$name = $this->getComponentNameFromClass($this);
 
-				throw new Exception("Component '$name' requires option '$opt'.");
+				throw new Exception("Component '$name' requires prop '$opt'.");
 				
 			}
 		}

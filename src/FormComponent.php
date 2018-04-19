@@ -12,21 +12,21 @@ trait FormComponent
 
 	protected function required()
 	{
-		return $this->option('required') ? 'required' : '';
+		return $this->prop('required') ? 'required' : '';
 	}
 
 	protected function disabled()
 	{
-		return $this->option('disabled') ? 'disabled' : '';
+		return $this->prop('disabled') ? 'disabled' : '';
 	}
 
 	protected function checked()
 	{
-		return $this->option('checked') ? 'checked' : '';
+		return $this->prop('checked') ? 'checked' : '';
 	}
 
 	protected function readonly()
 	{
-		return $this->option('readonly') ? 'readonly' : '';
+		return $this->prop('readonly') ? 'readonly' : '';
 	}
 }
