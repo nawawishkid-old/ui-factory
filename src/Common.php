@@ -147,13 +147,21 @@ abstract class Common
 		return $this;
 	}
 
-	public function option(string $name, $value = null)
+	public function option($opt, $value = null)
 	{
-		if (is_null($value)) {
-			return $this->options[$name];
+		if (is_array($opt)) {
+			foreach ($opt as $key => $value) {
+				$this->options[$key] = $value;
+			}
+			
+			return $this;
 		}
 
-		$this->options[$name] = $value;
+		if (is_null($value)) {
+			return isset($this->options[$opt]) ? $this->options[$opt] : '';
+		}
+
+		$this->options[$opt] = $value;
 		return $this;
 	}
 
