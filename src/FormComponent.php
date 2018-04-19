@@ -4,14 +4,12 @@ namespace UIFactory\Helper;
 
 use Exception;
 use UIFactory\Theme;
-use UIFactory\Helper\ComponentDirector;
 
 trait FormComponent
 {
-	use ComponentDirector;
-
 	protected function required()
 	{
+		// propExists($prop); // search prop value, not key
 		return $this->prop('required') ? 'required' : '';
 	}
 

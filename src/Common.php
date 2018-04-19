@@ -21,6 +21,12 @@ abstract class Common
 	protected $props = [];
 
 	protected $requiredProps = [];
+
+	protected $propTypes = [];
+
+	private $availablePropTypeRules = [
+		'type', 'in', 'not_in'
+	];
 	
 	/**
 	 * @var string Atom's inner HTML
@@ -88,7 +94,7 @@ abstract class Common
 	 */
 	public function make($amount = 1)
 	{
-		$this->qualifyOptions();
+		$this->checkRequiredProps();
 
 		if ($amount > 1) {
 			$this->makeMultiple($amount);
@@ -151,20 +157,24 @@ abstract class Common
 		return $this;
 	}
 
-	public function prop($opt, $default = '')
+	public function prop($prop, $default = '')
 	{
-		if (is_array($opt)) {
-			$this->props = array_merge($this->props, $opt);
+		if (is_array($prop)) {
+			foreach ($prop as $name => $value) {
+				$this->checkPropTypes($name, $value);
+				$this->props[$name] = $value;
+			}
+			// $this->props = array_merge($this->props, $prop);
 
 			return $this;
 		}
 
-		return isset($this->props[$opt]) 
-					? $this->props[$opt] 
+		return isset($this->props[$prop]) 
+					? $this->props[$prop] 
 					: $default;
 	}
 
-	protected function qualifyOptions()
+	protected function checkRequiredProps()
 	{
 		$prop_name = array_keys($this->props);
 
@@ -176,6 +186,82 @@ abstract class Common
 				
 			}
 		}
+	}
+
+	protected function checkPropTypes(string $name, $value)
+	{
+		if (! isset($this->propTypes[$name])) {
+			return;
+		}
+
+		$rule_value = $this->propTypes[$name];
+
+		switch ($this->getPropTypeRule($name)) {
+			case 'type':
+				$valid = $this->propTypeTypeIs($rule_value, $value);
+				break;
+			case 'in':
+				$valid = $this->propTypeIsIn($rule_value, $value);
+				break;
+			case 'not_in':
+				$valid = $this->propTypeIsNotIn($rule_value, $value);
+				break;
+		}
+
+		if ($valid !== true) {
+			throw new Exception($valid);
+			
+		}
+	}
+
+	protected function propTypeTypeIs(string $rule_value, $value)
+	{
+		$type = ['string', 'array', 'bool', 'int', 'float', 'callable'];
+
+		$valid = in_array($rule_value, $type)
+					? call_user_func_array('is_' . $rule_value, [$value])
+					: is_a($value, $rule_value);
+
+		if (! $valid) {
+			return "PropType's type must be $rule_value, " . gettype($value) . " given.";
+		}
+
+		return true;
+	}
+
+	protected function propTypeIsIn(array $rule_value, $value)
+	{
+		$array = $rule_value[1];
+		if (! in_array($value, $array)) {
+			return "PropType must be one of " . implode(', ', $array);
+			
+		}
+
+		return true;
+	}
+
+	protected function propTypeIsNotIn(array $rule_value, $value)
+	{
+		if ($this->propTypeIsIn($rule_value, $value) === true) {
+			return "PropType must not be one of " . implode(', ', $rule_value[1]);
+		}
+
+		return true;
+	}
+
+	protected function getPropTypeRule(string $name)
+	{
+		$raw_rule = $this->propTypes[$name];
+		$rule = is_string($raw_rule)
+					? 'type'
+					: (is_array($raw_rule) ? $raw_rule[0] : null);
+
+		if (! in_array($rule, $this->availablePropTypeRules)) {
+			throw new Exception("'$rule' is not a valid propType rule.");
+			
+		}
+
+		return $rule;
 	}
 
 	public function condition(callable $callback)
