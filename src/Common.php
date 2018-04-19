@@ -43,9 +43,10 @@ abstract class Common
 	 * @param mixed $echo Echo the component immediately?
 	 * @return void
 	 */
-	public function __construct(Theme $theme, $echo = 1)
+	public function __construct(array $options = [], Theme $theme = null, $echo = 1)
 	{
 		$this->theme = $theme;
+		$this->option($options);
 
 		if ($echo) {
 			$this->print($echo);
@@ -153,9 +154,10 @@ abstract class Common
 	public function option($opt, $value = null)
 	{
 		if (is_array($opt)) {
-			foreach ($opt as $key => $value) {
-				$this->options[$key] = $value;
-			}
+			$this->options = array_merge($this->options, $opt);
+			// foreach ($opt as $key => $value) {
+			// 	$this->options[$key] = $value;
+			// }
 
 			return $this;
 		}
@@ -180,6 +182,12 @@ abstract class Common
 				
 			}
 		}
+	}
+
+	public function condition(callable $callback)
+	{
+		call_user_func_array($callback, [$this]);
+		return $this;
 	}
 
 	/**
