@@ -1,12 +1,17 @@
 <?php
 
-namespace UIFactory\Helper;
-
-use Exception;
+namespace UIFactory\Component;
 
 
-trait FormComponent
+abstract class FormControls extends Base
 {
+	/**
+	 * Abstract function for returning HTML markup of this component
+	 *
+	 * @return string HTML markup
+	 */
+	// abstract protected function markup() : string;
+
 	protected function required()
 	{
 		// propExists($prop); // search prop value, not key
