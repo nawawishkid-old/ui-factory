@@ -3,15 +3,12 @@
 namespace UIFactory\Component;
 
 use Exception;
-use UIFactory\Helper\ComponentProperty;
 
 /**
  * Base class for component class to extends
  */
 abstract class Base
 {
-	use ComponentProperty;
-
 	/**
 	 * @var array $props Array of default properties for building this component.
 	 */
@@ -23,14 +20,14 @@ abstract class Base
 	protected $requiredProps = [];
 
 	/**
-	 * @var array $restrictedProps Array of expected client's property value. Use to restrict client's property value
+	 * @var array $requiredValidationProps Array of expected client's property value. Use to restrict client's property value
 	 */
-	protected $restrictedProps = [];
+	protected $requiredValidationProps = [];
 
 	/**
-	 * @var array $availableRestrictedPropRules Different type of restrictedProp validation. Use in ComponentProperty::getRestrictedPropRule()
+	 * @var array $availablePropValidationRules Different type of prop validation rules. Use in Base::getPropValidationRule()
 	 */
-	private static $availableRestrictedPropRules = [
+	private static $availablePropValidationRules = [
 		'type', 'in', 'not_in'
 	];
 
@@ -42,7 +39,7 @@ abstract class Base
 	];
 
 	/**
-	 * Abstract function for creating HTML markup of this component
+	 * Abstract function for returning HTML markup of this component
 	 *
 	 * @return string HTML markup
 	 */
@@ -88,6 +85,61 @@ abstract class Base
 	public function print($amount = 1)
 	{
 		echo $this->getHTML($amount);
+	}
+
+	/**
+	 * Component configurations
+	 *
+	 * @api
+	 * @param string $name Name of configuration you want to get/set
+	 * @param mixed $value If set, you get the config value. Otherwise, you set it
+	 * @return mixed
+	 */
+	public function config(string $name, $value = null)
+	{
+		if (! isset(self::$configs[$name])) {
+			return null;
+		}
+
+		if (is_null($value)) {
+			return self::$configs[$name];
+		}
+
+		self::$configs[$name] = $value;
+		return $this;
+	}
+
+	/**
+	 * Make the component behaves differently in specific condition
+	 *
+	 * @api
+	 * @param callable $callback Callback for client to make condition
+	 * @return Base
+	 */
+	public function condition(callable $callback)
+	{
+		call_user_func_array($callback, [$this]);
+		return $this;
+	}
+	
+	/**
+	 * Get/set component's properties in single method
+	 *
+	 * @api
+	 * @uses Base::setProp() to set prop
+	 * @uses Base::getProp() to get prop
+	 * @param string|array $prop Name or array of name-value pairs of properties. string is getting, array is setting
+	 * @param mixed $default Value to return if given prop not exists
+	 * @return mixed
+	 */
+	public function prop($prop, $default = '')
+	{
+		if (is_array($prop)) {
+			$this->setProp($prop, $default);
+			return $this;
+		}
+
+		return $this->getProp($prop, $default);
 	}
 
 	/**
@@ -147,37 +199,175 @@ abstract class Base
 	}
 
 	/**
-	 * Component configurations
+	 * Get component's property
 	 *
-	 * @api
-	 * @param string $name Name of configuration you want to get/set
-	 * @param mixed $value If set, you get the config value. Otherwise, you set it
-	 * @return mixed
+	 * @param string $prop_name Name of property
+	 * @param mixed $default Value to return if given prop not exists
+	 * @return mixed Component's property
 	 */
-	public function config(string $name, $value = null)
+	protected function getProp(string $prop_name, $default = '')
 	{
-		if (! isset(self::$configs[$name])) {
-			return null;
+		return isset($this->props[$prop_name]) 
+					? $this->props[$prop_name] 
+					: $default;
+	}
+
+	/**
+	 * Set component's property
+	 *
+	 * @uses Base::config()
+	 * @param array $prop_array Array of name-value pairs of property
+	 * @param mixed $default Value to return if given prop not exists
+	 * @return Base
+	 */
+	protected function setProp(array $prop_array)
+	{
+		if (! $this->config('PROP_VALIDATION')) {
+			foreach ($prop_array as $name => $value) {
+				$this->props[$name] = $value;
+			}
+
+			return $this;
 		}
 
-		if (is_null($value)) {
-			return self::$configs[$name];
+		foreach ($prop_array as $name => $value) {
+			$this->checkRestrictedProps($name, $value);
+			$this->props[$name] = $value;
 		}
 
-		self::$configs[$name] = $value;
 		return $this;
 	}
 
 	/**
-	 * Make the component behaves differently in specific condition
+	 * Check whether client has given all required properties. If not, throw an error
 	 *
-	 * @api
-	 * @param callable $callback Callback for client to make condition
-	 * @return Base
+	 * @uses Base::getComponentNameFromClass()
+	 * @return void
 	 */
-	public function condition(callable $callback)
+	protected function checkRequiredProps()
 	{
-		call_user_func_array($callback, [$this]);
-		return $this;
+		$prop_name = array_keys($this->props);
+
+		foreach ($this->requiredProps as $opt) {
+			if (! in_array($opt, $prop_name)) {
+				$name = $this->getComponentNameFromClass($this);
+
+				throw new Exception("Component '$name' requires prop '$opt'.");
+				
+			}
+		}
+	}
+
+	/**
+	 * Qualification of component's restricted properties. In other words, client-given property validation.
+	 *
+	 * @uses Base::getPropValidationRule() to get prop validation rule
+	 * @uses Base::requiredValidationPropTypeIs() to check type of client-given prop
+	 * @uses Base::requiredValidationPropIsIn() to check if client-given prop is one of specific value
+	 * @uses Base::requiredValidationPropIsNotIn() to check if client-given prop is not one of specific value
+	 * @param string $name Key of UIFactory\Component\Base::$requiredValidationProps to get validation rule
+	 * @param mixed $value Value of client-given prop to validate
+	 * @return void
+	 */
+	protected function checkRestrictedProps(string $name, $value)
+	{
+		if (! isset($this->requiredValidationProps[$name])) {
+			return;
+		}
+
+		$rule_value = $this->requiredValidationProps[$name];
+
+		switch ($this->getPropValidationRule($name)) {
+			case 'type':
+				$valid = $this->requiredValidationPropTypeIs($rule_value, $value);
+				break;
+			case 'in':
+				$valid = $this->requiredValidationPropIsIn($rule_value[1], $value);
+				break;
+			case 'not_in':
+				$valid = $this->requiredValidationPropIsNotIn($rule_value[1], $value);
+				break;
+		}
+
+		if ($valid !== true) {
+			throw new Exception($valid);
+			
+		}
+	}
+
+	/**
+	 * Validate client-given prop by type of prop
+	 *
+	 * @param string $rule_value Validation rule from UIFactory\Component\Base::$requiredValidationProps
+	 * @param mixed $value Client-given value
+	 * @return bool|string True, if client-given prop is valid. Otherwise, error string to use in exception
+	 */
+	protected function requiredValidationPropTypeIs(string $rule_value, $value)
+	{
+		$type = ['string', 'array', 'bool', 'int', 'float', 'callable'];
+
+		$valid = in_array($rule_value, $type)
+					? call_user_func_array('is_' . $rule_value, [$value])
+					: is_a($value, $rule_value);
+
+		if (! $valid) {
+			return "RestrictedProp's type must be $rule_value, " . gettype($value) . " given.";
+		}
+
+		return true;
+	}
+
+	/**
+	 * Validate that client-given prop must be one of specific value specified in inherited class of UIFactory\Component\Base
+	 *
+	 * @param string $rule_value Validation rule from UIFactory\Component\Base::$requiredValidationProps
+	 * @param mixed $value Client-given value
+	 * @return bool|string True, if client-given prop is valid. Otherwise, error string to use in exception
+	 */
+	protected function requiredValidationPropIsIn(array $rule_value, $value)
+	{
+		if (! in_array($value, $rule_value)) {
+			return "RestrictedProp must be one of " . implode(', ', $rule_value);
+			
+		}
+
+		return true;
+	}
+
+	/**
+	 * Validate that client-given prop must NOT be one of specific value specified in inherited class of UIFactory\Component\Base
+	 *
+	 * @param string $rule_value Validation rule from UIFactory\Component\Base::$requiredValidationProps
+	 * @param mixed $value Client-given value
+	 * @return bool|string True, if client-given prop is valid. Otherwise, error string to use in exception
+	 */
+	protected function requiredValidationPropIsNotIn(array $rule_value, $value)
+	{
+		if ($this->requiredValidationPropIsIn($rule_value, $value) === true) {
+			return "RestrictedProp must not be one of " . implode(', ', $rule_value);
+		}
+
+		return true;
+	}
+
+	/**
+	 * Get prop validation rule
+	 *
+	 * @param string $name Key of UIFactory\Component\Base::$requiredValidationProps to get validation rule
+	 * @return string|array Validation rule from UIFactory\Component\Base::$requiredValidationProps
+	 */
+	protected function getPropValidationRule(string $name)
+	{
+		$raw_rule = $this->requiredValidationProps[$name];
+		$rule = is_string($raw_rule)
+					? 'type'
+					: (is_array($raw_rule) ? $raw_rule[0] : null);
+
+		if (! in_array($rule, self::$availablePropValidationRules)) {
+			throw new Exception("'$rule' is not a valid prop validation rule.");
+			
+		}
+
+		return $rule;
 	}
 }
