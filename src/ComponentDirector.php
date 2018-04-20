@@ -2,7 +2,7 @@
 
 namespace UIFactory\Helper;
 
-use UIFactory\Component\Common;
+use UIFactory\Component\Base;
 
 trait ComponentDirector
 {
@@ -16,7 +16,7 @@ trait ComponentDirector
 		}
 	}
 
-	protected function addComponent(string $type, Common $component)
+	protected function addComponent(string $type, Base $component)
 	{
 		$this->{$type . 's'}[$this->getComponentNameFromClass($component)] = $component;
 	}

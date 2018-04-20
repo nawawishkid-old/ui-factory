@@ -7,7 +7,7 @@ use UIFactory\Theme;
 use UIFactory\Helper\ComponentDirector;
 use UIFactory\Helper\ComponentProperty;
 
-abstract class Common
+abstract class Base
 {
 	use ComponentDirector;
 	use ComponentProperty;
@@ -49,7 +49,7 @@ abstract class Common
 	/**
 	 * Set theme and echo this component if requires
 	 *
-	 * @uses Common::print() to echo component
+	 * @uses Base::print() to echo component
 	 *
 	 * @param Theme $theme Theme instance
 	 * @param mixed $echo Echo the component immediately?
@@ -73,7 +73,7 @@ abstract class Common
 	/**
 	 * Echo markup
 	 *
-	 * @uses Common::markup() to get component HTML markup
+	 * @uses Base::markup() to get component HTML markup
 	 *
 	 * @return void
 	 */
@@ -94,7 +94,7 @@ abstract class Common
 	/**
 	 * Return component markup
 	 *
-	 * @uses Common::markup() to get component HTML markup
+	 * @uses Base::markup() to get component HTML markup
 	 *
 	 * @return string HTML markup
 	 */
@@ -131,7 +131,7 @@ abstract class Common
 	 * Set component's inner HTML
 	 *
 	 * @param string $content Content to set
-	 * @return Common
+	 * @return Base
 	 */
 	public function content(string $content)
 	{
@@ -143,7 +143,7 @@ abstract class Common
 	 * Append content to component's inner HTML by string concatenation
 	 *
 	 * @param string $content Content to append
-	 * @return Common
+	 * @return Base
 	 */
 	public function appendContent(string $content)
 	{
@@ -155,7 +155,7 @@ abstract class Common
 	 * Prepend component's inner HTML by string concatenation
 	 *
 	 * @param string $content Content to prepend
-	 * @return Common
+	 * @return Base
 	 */
 	public function prependContent(string $content)
 	{
@@ -164,13 +164,13 @@ abstract class Common
 	}
 
 	/**
-	 * Component configurations
+	 * Base configurations
 	 *
 	 * @param
 	 * @param
 	 * @return
 	 */
-	public function config(string $name, $value)
+	public function config(string $name, $value = null)
 	{
 		if (! isset($this->configs[$name])) {
 			return null;

@@ -4,7 +4,7 @@ namespace UIFactory\Component;
 
 use UIFactory\Theme;
 
-abstract class Molecule extends Common
+abstract class Molecule extends Base
 {
 	const CSS_CLASS_PREFIX = 'uif-m-';
 
@@ -25,8 +25,8 @@ abstract class Molecule extends Common
 
 	public function __construct(array $props = [], Theme $theme = null, $echo = 1)
 	{
-		$this->initComponentList('atom');
-		$this->attributes['class'] = self::CSS_CLASS_PREFIX . $this->getComponentNameFromClass($this);
+		$this->initBaseList('atom');
+		$this->attributes['class'] = self::CSS_CLASS_PREFIX . $this->getBaseNameFromClass($this);
 
 		// $atoms = [];
 
@@ -41,13 +41,13 @@ abstract class Molecule extends Common
 
 	public function editAtom(string $name, callable $callback)
 	{
-		$this->editComponent('atom', $name, $callback);
+		$this->editBase('atom', $name, $callback);
 		return $this;
 	}
 
 	public function atom(string $name, $get = true)
 	{
-		$atom = $this->getComponent('atom', $name, false);
+		$atom = $this->getBase('atom', $name, false);
 		return $get ? $atom->get() : $atom;
 	}
 }

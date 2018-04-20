@@ -9,7 +9,7 @@ class FactoryBuilder
 	public static $instance = null;
 	protected static $themes = [];
 	protected static $factories = [];
-	protected static $requiredComponents = [];
+	protected static $requiredBases = [];
 	protected static $configs = [
 		'debug' => false,
 		'PROP_VALIDATION' => true
@@ -55,12 +55,12 @@ class FactoryBuilder
 
 	public static function requires(array $component_name)
 	{
-		self::$requiredComponents = $component_name;
+		self::$requiredBases = $component_name;
 	}
 
 	protected static function qualifyFactory(string $name, $factory)
 	{
-		foreach (self::$requiredComponents as $value) {
+		foreach (self::$requiredBases as $value) {
 			try {
 				if (! method_exists($factory, $value)) {
 					throw new Exception();

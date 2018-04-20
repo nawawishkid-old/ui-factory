@@ -2,13 +2,13 @@
 
 namespace UIFactory\Helper;
 
-trait ComponentAttribute
+trait BaseAttribute
 {
 	/**
 	 * Add HTML attributes to component
 	 *
 	 * @param array $attributes Array of HTML attributes e.g. ['class' => 'my-class']
-	 * @return Common
+	 * @return Base
 	 */
 	public function addAttributes(array $attributes)
 	{
@@ -42,7 +42,7 @@ trait ComponentAttribute
 	/**
 	 * Get inline HTML attribute key-value e.g. style="background:red;"
 	 *
-	 * @uses Common::getSingleInlineAttribute() to get one inline attribute
+	 * @uses Base::getSingleInlineAttribute() to get one inline attribute
 	 *
 	 * @param string|array|null $arg (Array of) attribute name, or null to get all attributes
 	 * @return string HTML attributes or empty string
@@ -73,7 +73,7 @@ trait ComponentAttribute
 	/**
 	 * Get inline HTML attribute key-value e.g. style="color:red;"
 	 *
-	 * @uses Common::getAttributeValue() to get only attribute value, not key-value pair
+	 * @uses Base::getAttributeValue() to get only attribute value, not key-value pair
 	 *
 	 * @param string $name Name of attribute
 	 * @return string HTML attributes or empty
@@ -87,7 +87,7 @@ trait ComponentAttribute
 	/**
 	 * Get component's HTML attribute
 	 *
-	 * @uses Common::getCSSRuleString() e.g. 'color:red;'
+	 * @uses Base::getCSSRuleString() e.g. 'color:red;'
 	 *
 	 * @param string $name Name of attribute
 	 * @return string Attribute value or empty string
