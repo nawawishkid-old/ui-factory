@@ -3,7 +3,6 @@
 namespace UIFactory\Component;
 
 use Exception;
-use UIFactory\Helper\ComponentDirector;
 use UIFactory\Helper\ComponentProperty;
 
 /**
@@ -11,7 +10,6 @@ use UIFactory\Helper\ComponentProperty;
  */
 abstract class Base
 {
-	use ComponentDirector;
 	use ComponentProperty;
 
 	/**
