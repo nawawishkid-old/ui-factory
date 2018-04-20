@@ -231,7 +231,7 @@ abstract class Base
 		}
 
 		foreach ($prop_array as $name => $value) {
-			$this->checkRestrictedProps($name, $value);
+			$this->validateRequiredValidationProp($name, $value);
 			$this->props[$name] = $value;
 		}
 
@@ -269,7 +269,7 @@ abstract class Base
 	 * @param mixed $value Value of client-given prop to validate
 	 * @return void
 	 */
-	protected function checkRestrictedProps(string $name, $value)
+	protected function validateRequiredValidationProp(string $name, $value)
 	{
 		if (! isset($this->requiredValidationProps[$name])) {
 			return;
@@ -311,7 +311,7 @@ abstract class Base
 					: is_a($value, $rule_value);
 
 		if (! $valid) {
-			return "RestrictedProp's type must be $rule_value, " . gettype($value) . " given.";
+			return "Type of given prop must be $rule_value, " . gettype($value) . " given.";
 		}
 
 		return true;
@@ -327,7 +327,7 @@ abstract class Base
 	protected function requiredValidationPropIsIn(array $rule_value, $value)
 	{
 		if (! in_array($value, $rule_value)) {
-			return "RestrictedProp must be one of " . implode(', ', $rule_value);
+			return "Given prop must be one of " . implode(', ', $rule_value);
 			
 		}
 
@@ -344,7 +344,7 @@ abstract class Base
 	protected function requiredValidationPropIsNotIn(array $rule_value, $value)
 	{
 		if ($this->requiredValidationPropIsIn($rule_value, $value) === true) {
-			return "RestrictedProp must not be one of " . implode(', ', $rule_value);
+			return "Given prop must not be one of " . implode(', ', $rule_value);
 		}
 
 		return true;
