@@ -21,7 +21,7 @@ trait ComponentProperty
 			}
 
 			foreach ($prop as $name => $value) {
-				$this->checkPropTypes($name, $value);
+				$this->checkRestrictedProps($name, $value);
 				$this->props[$name] = $value;
 			}
 			// $this->props = array_merge($this->props, $prop);
@@ -48,23 +48,23 @@ trait ComponentProperty
 		}
 	}
 
-	protected function checkPropTypes(string $name, $value)
+	protected function checkRestrictedProps(string $name, $value)
 	{
-		if (! isset($this->propTypes[$name])) {
+		if (! isset($this->restrictedProps[$name])) {
 			return;
 		}
 
-		$rule_value = $this->propTypes[$name];
+		$rule_value = $this->restrictedProps[$name];
 
-		switch ($this->getPropTypeRule($name)) {
+		switch ($this->getRestrictedPropRule($name)) {
 			case 'type':
-				$valid = $this->propTypeTypeIs($rule_value, $value);
+				$valid = $this->restrictedPropTypeIs($rule_value, $value);
 				break;
 			case 'in':
-				$valid = $this->propTypeIsIn($rule_value, $value);
+				$valid = $this->restrictedPropIsIn($rule_value, $value);
 				break;
 			case 'not_in':
-				$valid = $this->propTypeIsNotIn($rule_value, $value);
+				$valid = $this->restrictedPropIsNotIn($rule_value, $value);
 				break;
 		}
 
@@ -74,7 +74,7 @@ trait ComponentProperty
 		}
 	}
 
-	protected function propTypeTypeIs(string $rule_value, $value)
+	protected function restrictedPropTypeIs(string $rule_value, $value)
 	{
 		$type = ['string', 'array', 'bool', 'int', 'float', 'callable'];
 
@@ -83,41 +83,41 @@ trait ComponentProperty
 					: is_a($value, $rule_value);
 
 		if (! $valid) {
-			return "PropType's type must be $rule_value, " . gettype($value) . " given.";
+			return "RestrictedProp's type must be $rule_value, " . gettype($value) . " given.";
 		}
 
 		return true;
 	}
 
-	protected function propTypeIsIn(array $rule_value, $value)
+	protected function restrictedPropIsIn(array $rule_value, $value)
 	{
 		$array = $rule_value[1];
 		if (! in_array($value, $array)) {
-			return "PropType must be one of " . implode(', ', $array);
+			return "RestrictedProp must be one of " . implode(', ', $array);
 			
 		}
 
 		return true;
 	}
 
-	protected function propTypeIsNotIn(array $rule_value, $value)
+	protected function restrictedPropIsNotIn(array $rule_value, $value)
 	{
-		if ($this->propTypeIsIn($rule_value, $value) === true) {
-			return "PropType must not be one of " . implode(', ', $rule_value[1]);
+		if ($this->restrictedPropIsIn($rule_value, $value) === true) {
+			return "RestrictedProp must not be one of " . implode(', ', $rule_value[1]);
 		}
 
 		return true;
 	}
 
-	protected function getPropTypeRule(string $name)
+	protected function getRestrictedPropRule(string $name)
 	{
-		$raw_rule = $this->propTypes[$name];
+		$raw_rule = $this->restrictedProps[$name];
 		$rule = is_string($raw_rule)
 					? 'type'
 					: (is_array($raw_rule) ? $raw_rule[0] : null);
 
-		if (! in_array($rule, self::$availablePropTypeRules)) {
-			throw new Exception("'$rule' is not a valid propType rule.");
+		if (! in_array($rule, self::$availableRestrictedPropRules)) {
+			throw new Exception("'$rule' is not a valid restrictedProp rule.");
 			
 		}
 

@@ -22,14 +22,14 @@ abstract class Base
 	protected $requiredProps = [];
 
 	/**
-	 * @var array $propTypes Array of expected client's property value. Use to restrict client's property value
+	 * @var array $restrictedProps Array of expected client's property value. Use to restrict client's property value
 	 */
-	protected $propTypes = [];
+	protected $restrictedProps = [];
 
 	/**
 	 * @var array
 	 */
-	private static $availablePropTypeRules = [
+	private static $availableRestrictedPropRules = [
 		'type', 'in', 'not_in'
 	];
 
