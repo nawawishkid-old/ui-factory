@@ -6,6 +6,9 @@ use Exception;
 use UIFactory\Helper\ComponentDirector;
 use UIFactory\Helper\ComponentProperty;
 
+/**
+ * Base class for component class to extends
+ */
 abstract class Base
 {
 	use ComponentDirector;
@@ -27,18 +30,21 @@ abstract class Base
 	protected $restrictedProps = [];
 
 	/**
-	 * @var array
+	 * @var array $availableRestrictedPropRules Different type of restrictedProp validation. Use in ComponentProperty::getRestrictedPropRule()
 	 */
 	private static $availableRestrictedPropRules = [
 		'type', 'in', 'not_in'
 	];
 
-	protected $configs = [
+	/**
+	 * @var array $configs Array of component's configuration
+	 */
+	protected static $configs = [
 		'PROP_VALIDATION' => false
 	];
 
 	/**
-	 * HTML markup of this component
+	 * Abstract function for creating HTML markup of this component
 	 *
 	 * @return string HTML markup
 	 */
@@ -47,8 +53,8 @@ abstract class Base
 	/**
 	 * Set theme and echo this component if requires
 	 *
+	 * @uses Base::prop() to set component's properties
 	 * @uses Base::print() to echo component
-	 *
 	 * @param mixed $echo Echo the component immediately?
 	 * @return void
 	 */
@@ -61,16 +67,24 @@ abstract class Base
 		}
 	}
 
+	/**
+	 * Return component markup
+	 *
+	 * @api
+	 * @uses Base::getHTML() to actually get component's markup
+	 * @param int $amount Number of component's duplication
+	 * @return string HTML markup of this component
+	 */
 	public function get($amount = 1)
 	{
 		return $this->getHTML($amount);
 	}
 
 	/**
-	 * Echo markup
+	 * Echo component's markup
 	 *
+	 * @api
 	 * @uses Base::markup() to get component HTML markup
-	 *
 	 * @return void
 	 */
 	public function print($amount = 1)
@@ -78,7 +92,14 @@ abstract class Base
 		echo $this->getHTML($amount);
 	}
 
-	public function getHTML($amount = 1)
+	/**
+	 * Get component's markup from Base::$html
+	 *
+	 * @uses Base::make() to assign markup to Base::$html if it has not assigned yet.
+	 * @param int $amount @see Base::makeMultiple()
+	 * @return string HTML markup of this component
+	 */
+	protected function getHTML(int $amount = 1)
 	{
 		if (! isset($this->html) || empty($this->html)) {
 			$this->make($amount);
@@ -88,13 +109,15 @@ abstract class Base
 	}
 
 	/**
-	 * Return component markup
+	 * Assign component's markup to Base::$html
 	 *
+	 * @uses Base::checkRequiredProps() to validate client-given property
+	 * @uses Base::makeMultiple() to assign multiple component's duplication to Base::$html
 	 * @uses Base::markup() to get component HTML markup
-	 *
+	 * @param int $amount @see Base::makeMultiple()
 	 * @return string HTML markup
 	 */
-	public function make($amount = 1)
+	protected function make($amount = 1)
 	{
 		$this->checkRequiredProps();
 
@@ -107,6 +130,13 @@ abstract class Base
 		return $this;
 	}
 
+	/**
+	 * Assign multiple component's duplication to Base::$html
+	 *
+	 * @uses Base::markup() to get component's markup
+	 * @param int $amount Number of component's duplication
+	 * @return
+	 */
 	protected function makeMultiple(int $amount)
 	{
 		$markups = '';
@@ -119,26 +149,34 @@ abstract class Base
 	}
 
 	/**
-	 * Base configurations
+	 * Component configurations
 	 *
-	 * @param
-	 * @param
-	 * @return
+	 * @api
+	 * @param string $name Name of configuration you want to get/set
+	 * @param mixed $value If set, you get the config value. Otherwise, you set it
+	 * @return mixed
 	 */
 	public function config(string $name, $value = null)
 	{
-		if (! isset($this->configs[$name])) {
+		if (! isset(self::$configs[$name])) {
 			return null;
 		}
 
 		if (is_null($value)) {
-			return $this->configs[$name];
+			return self::$configs[$name];
 		}
 
-		$this->configs[$name] = $value;
+		self::$configs[$name] = $value;
 		return $this;
 	}
 
+	/**
+	 * Make the component behaves differently in specific condition
+	 *
+	 * @api
+	 * @param callable $callback Callback for client to make condition
+	 * @return Base
+	 */
 	public function condition(callable $callback)
 	{
 		call_user_func_array($callback, [$this]);
