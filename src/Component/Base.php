@@ -370,4 +370,13 @@ abstract class Base
 
 		return $rule;
 	}
+
+	protected function getComponentNameFromClass($component)
+	{
+		$string = is_string($component) ? $component : get_class($component);
+
+		preg_match('/\w+$/', $string, $matches);
+
+		return strtolower($matches[0]);
+	}
 }

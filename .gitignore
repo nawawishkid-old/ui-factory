@@ -1,5 +1,4 @@
 composer.phar
 /vendor/
-/app/
 /public/
 /view/
