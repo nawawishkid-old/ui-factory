@@ -3,6 +3,7 @@
 namespace UIFactory\Helper;
 
 use Exception;
+use UIFactory\FactoryBuilder as FB;
 use UIFactory\Theme;
 
 trait ComponentProperty
@@ -11,6 +12,14 @@ trait ComponentProperty
 	public function prop($prop, $default = '')
 	{
 		if (is_array($prop)) {
+			if (! $this->config('PROP_VALIDATION')) {
+				foreach ($prop as $name => $value) {
+					$this->props[$name] = $value;
+				}
+
+				return $this;
+			}
+
 			foreach ($prop as $name => $value) {
 				$this->checkPropTypes($name, $value);
 				$this->props[$name] = $value;

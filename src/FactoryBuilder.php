@@ -7,10 +7,13 @@ use Exception;
 class FactoryBuilder
 {	
 	public static $instance = null;
-	protected static $debug = false;
 	protected static $themes = [];
 	protected static $factories = [];
 	protected static $requiredComponents = [];
+	protected static $configs = [
+		'debug' => false,
+		'PROP_VALIDATION' => true
+	];
 
 	private function __construct() {}
 
@@ -63,7 +66,7 @@ class FactoryBuilder
 					throw new Exception();
 				}
 			} catch (Exception $e) {
-				if (! self::$debug) {
+				if (! self::$config('debug')) {
 					return;
 				}
 				
@@ -74,13 +77,13 @@ class FactoryBuilder
 		return true;
 	}
 
-	public static function debug($debug = null)
+	public static function config($name, $value = null)
 	{
-		if (is_null($debug)) {
-			return self::$debug;
+		if (is_null($value)) {
+			return self::$configs[$name];
 		}
 
-		self::$debug = $debug;
+		self::$configs[$name] = $value;
 	}
 
 	/************************************
