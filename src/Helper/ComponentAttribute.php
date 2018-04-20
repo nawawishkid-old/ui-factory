@@ -2,7 +2,7 @@
 
 namespace UIFactory\Helper;
 
-trait BaseAttribute
+trait ComponentAttribute
 {
 	/**
 	 * Add HTML attributes to component

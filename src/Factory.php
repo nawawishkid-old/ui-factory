@@ -4,14 +4,14 @@ namespace UIFactory;
 
 use UIFactory\Component\Base;
 
-abstract class Factory
+class Factory
 {
 	protected $cssSrcs = [];
 	protected $jsSrcs = [];
 
-	abstract public function button(array $props = [], $echo = 1) : Base;
-	abstract public function form(array $props = [], $echo = 1) : Base;
-	abstract public function textField(array $props = [], $echo = 1) : Base;
+	// // Examples method signature
+	// public function button(array $props = [], $echo = 1) : Base;
+	// public function textField(array $props = [], $echo = 1) : Base;
 
 	public function script($src = null, $include = false)
 	{
