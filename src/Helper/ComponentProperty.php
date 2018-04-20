@@ -4,7 +4,7 @@ namespace UIFactory\Helper;
 
 use Exception;
 use UIFactory\FactoryBuilder as FB;
-use UIFactory\Theme;
+
 
 trait ComponentProperty
 {

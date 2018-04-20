@@ -3,7 +3,6 @@
 namespace UIFactory\Component;
 
 use Exception;
-use UIFactory\Theme;
 use UIFactory\Helper\ComponentDirector;
 use UIFactory\Helper\ComponentProperty;
 
@@ -35,7 +34,7 @@ abstract class Base
 	];
 	
 	/**
-	 * @var string Atom's inner HTML
+	 * @var string Base's inner HTML
 	 */
 	protected $content = '';
 
@@ -51,13 +50,11 @@ abstract class Base
 	 *
 	 * @uses Base::print() to echo component
 	 *
-	 * @param Theme $theme Theme instance
 	 * @param mixed $echo Echo the component immediately?
 	 * @return void
 	 */
-	public function __construct(array $props = [], Theme $theme = null, $echo = 1)
+	public function __construct(array $props = [], $echo = 1)
 	{
-		$this->theme = $theme;
 		$this->prop($props);
 
 		if ($echo) {
@@ -120,11 +117,6 @@ abstract class Base
 		}
 
 		$this->html = $markups;
-	}
-
-	public function getTheme()
-	{
-		return $this->theme;
 	}
 
 	/**
