@@ -11,14 +11,6 @@ abstract class Base
 	use ComponentDirector;
 	use ComponentProperty;
 
-	/**
-	 * @var array HTML attributes
-	 */
-	protected $attributes = [
-		'style' => [],
-		'class' => ''
-	];
-
 	protected $props = [];
 
 	protected $requiredProps = [];
@@ -32,11 +24,6 @@ abstract class Base
 	protected $configs = [
 		'PROP_VALIDATION' => false
 	];
-	
-	/**
-	 * @var string Base's inner HTML
-	 */
-	protected $content = '';
 
 	/**
 	 * HTML markup of this component
@@ -117,42 +104,6 @@ abstract class Base
 		}
 
 		$this->html = $markups;
-	}
-
-	/**
-	 * Set component's inner HTML
-	 *
-	 * @param string $content Content to set
-	 * @return Base
-	 */
-	public function content(string $content)
-	{
-		$this->content = $content;
-		return $this;
-	}
-
-	/**
-	 * Append content to component's inner HTML by string concatenation
-	 *
-	 * @param string $content Content to append
-	 * @return Base
-	 */
-	public function appendContent(string $content)
-	{
-		$this->content = $this->content . $content;
-		return $this;
-	}
-
-	/**
-	 * Prepend component's inner HTML by string concatenation
-	 *
-	 * @param string $content Content to prepend
-	 * @return Base
-	 */
-	public function prependContent(string $content)
-	{
-		$this->content = $content . $this->content;
-		return $this;
 	}
 
 	/**
