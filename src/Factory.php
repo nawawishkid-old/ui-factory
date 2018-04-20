@@ -18,6 +18,8 @@ abstract class Factory
 	protected $theme;
 
 	protected $libraryURIs = [];
+	protected $cssSrcs = [];
+	protected $jsSrcs = [];
 
 	abstract public function button(array $props = [], $echo = 1) : Atom;
 	abstract public function form(array $props = [], $echo = 1) : Molecule;
@@ -57,21 +59,54 @@ abstract class Factory
 		return $this;
 	}
 
-	public function getLibraryURI($name)
+	public function script($src = null, $include = false)
 	{
-		return $this->libraryURIs[$name];
+		$this->sourceTagArgumentHandling('js', $src, $include);
 	}
 
-	public function script($src, $include = false)
+	public function style($src = null, $include = false)
 	{
-		if ($include) {
-			echo '<script>';
-			include $src;
-			echo '</script>';
+		$this->sourceTagArgumentHandling('css', $src, $include);
+	}
+
+	protected function sourceTagArgumentHandling(string $type, $src_name = null, $include = false)
+	{
+		$src = is_null($src_name) ? $this->{$type . 'Srcs'} : $this->{$type . 'Srcs'}[$src_name];
+
+		if (is_array($src)) {
+			foreach ($src as $name => $source) {
+				$this->getSourceTag($type, $source, $include);
+			}
 
 			return;
 		}
 
-		echo '<script src="' . $src . '"></script>';
+		$this->getSourceTag($type, $src_name, $include);
+	}
+
+	protected function getSourceTag(string $type, string $src, $include = false)
+	{
+		if ($type === 'js') {
+			$tag = 'script';
+			$src_attr = 'src';
+			$attr = '';
+		} elseif ($type === 'css' && ! $include) {
+			$tag = 'link';
+			$src_attr = 'href';
+			$attr = 'rel="stylesheet" type="text/css"';
+		} else {
+			$tag = 'style';
+			$attr = '';
+		}
+
+		if ($include) {
+			echo "<$tag>";
+			include $src;
+			echo "</$tag>";
+
+			return;
+		}
+
+		echo "<$tag $attr {$src_attr}=\"$src\"></$tag>";
 	}
 }
