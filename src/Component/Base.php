@@ -11,13 +11,25 @@ abstract class Base
 	use ComponentDirector;
 	use ComponentProperty;
 
+	/**
+	 * @var array $props Array of default properties for building this component.
+	 */
 	protected $props = [];
 
+	/**
+	 * @var array $prorequiredPropsps Array of required properties for building this component.
+	 */
 	protected $requiredProps = [];
 
+	/**
+	 * @var array $propTypes Array of expected client's property value. Use to restrict client's property value
+	 */
 	protected $propTypes = [];
 
-	private $availablePropTypeRules = [
+	/**
+	 * @var array
+	 */
+	private static $availablePropTypeRules = [
 		'type', 'in', 'not_in'
 	];
 

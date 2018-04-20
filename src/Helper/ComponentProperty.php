@@ -116,7 +116,7 @@ trait ComponentProperty
 					? 'type'
 					: (is_array($raw_rule) ? $raw_rule[0] : null);
 
-		if (! in_array($rule, $this->availablePropTypeRules)) {
+		if (! in_array($rule, self::$availablePropTypeRules)) {
 			throw new Exception("'$rule' is not a valid propType rule.");
 			
 		}
