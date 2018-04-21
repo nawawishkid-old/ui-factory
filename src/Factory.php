@@ -2,7 +2,7 @@
 
 namespace UIFactory;
 
-use UIFactory\Component\Base;
+use UIFactory\Components\Base;
 
 class Factory
 {

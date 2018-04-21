@@ -1,13 +1,13 @@
 <?php
 
-namespace UIFactory\Component;
+namespace UIFactory;
 
 use Exception;
 
 /**
  * Base class for component class to extends
  */
-abstract class Base
+abstract class Component
 {
 	/**
 	 * @var array $props Array of default properties for building this component.
@@ -25,7 +25,7 @@ abstract class Base
 	protected $requiredValidationProps = [];
 
 	/**
-	 * @var array $availablePropValidationRules Different type of prop validation rules. Use in Base::getPropValidationRuleName()
+	 * @var array $availablePropValidationRules Different type of prop validation rules. Use in Component::getPropValidationRuleName()
 	 */
 	private static $availablePropValidationRules = [
 		'type', 'in', 'not_in'
@@ -53,8 +53,8 @@ abstract class Base
 	/**
 	 * Set theme and echo this component if requires
 	 *
-	 * @uses Base::prop() to set component's properties
-	 * @uses Base::print() to echo component
+	 * @uses Component::prop() to set component's properties
+	 * @uses Component::print() to echo component
 	 * @param mixed $echo Echo the component immediately?
 	 * @return void
 	 */
@@ -88,7 +88,7 @@ abstract class Base
 	 * Return component markup
 	 *
 	 * @api
-	 * @uses Base::getHTML() to actually get component's markup
+	 * @uses Component::getHTML() to actually get component's markup
 	 * @param int $amount Number of component's duplication
 	 * @return string HTML markup of this component
 	 */
@@ -102,7 +102,7 @@ abstract class Base
 	 * Echo component's markup
 	 *
 	 * @api
-	 * @uses Base::markup() to get component HTML markup
+	 * @uses Component::markup() to get component HTML markup
 	 * @return void
 	 */
 	public function render()
@@ -138,7 +138,7 @@ abstract class Base
 	 *
 	 * @api
 	 * @param callable $callback Callback for client to make condition
-	 * @return Base
+	 * @return Component
 	 */
 	public function condition(callable $callback)
 	{
@@ -150,8 +150,8 @@ abstract class Base
 	 * Get/set component's properties in single method
 	 *
 	 * @api
-	 * @uses Base::setProp() to set prop
-	 * @uses Base::getProp() to get prop
+	 * @uses Component::setProp() to set prop
+	 * @uses Component::getProp() to get prop
 	 * @param string|array $prop Name or array of name-value pairs of properties. string is getting, array is setting
 	 * @param mixed $default Value to return if given prop not exists
 	 * @return mixed
@@ -187,10 +187,10 @@ abstract class Base
 	}
 
 	/**
-	 * Get component's markup from Base::$html
+	 * Get component's markup from Component::$html
 	 *
-	 * @uses Base::make() to assign markup to Base::$html if it has not assigned yet.
-	 * @param int $amount @see Base::makeMultiple()
+	 * @uses Component::make() to assign markup to Component::$html if it has not assigned yet.
+	 * @param int $amount @see Component::makeMultiple()
 	 * @return string HTML markup of this component
 	 */
 	// protected function getHTML(int $amount = 1)
@@ -203,12 +203,12 @@ abstract class Base
 	// }
 
 	/**
-	 * Assign component's markup to Base::$html
+	 * Assign component's markup to Component::$html
 	 *
-	 * @uses Base::checkRequiredProps() to validate client-given property
-	 * @uses Base::makeMultiple() to assign multiple component's duplication to Base::$html
-	 * @uses Base::markup() to get component HTML markup
-	 * @param int $amount @see Base::makeMultiple()
+	 * @uses Component::checkRequiredProps() to validate client-given property
+	 * @uses Component::makeMultiple() to assign multiple component's duplication to Component::$html
+	 * @uses Component::markup() to get component HTML markup
+	 * @param int $amount @see Component::makeMultiple()
 	 * @return string HTML markup
 	 */
 	protected function make($amount = 1)
@@ -235,9 +235,9 @@ abstract class Base
 	}
 
 	/**
-	 * Assign multiple component's duplication to Base::$html
+	 * Assign multiple component's duplication to Component::$html
 	 *
-	 * @uses Base::markup() to get component's markup
+	 * @uses Component::markup() to get component's markup
 	 * @param int $amount Number of component's duplication
 	 * @return
 	 */
@@ -269,10 +269,10 @@ abstract class Base
 	/**
 	 * Set component's property
 	 *
-	 * @uses Base::config()
+	 * @uses Component::config()
 	 * @param array $prop_array Array of name-value pairs of property
 	 * @param mixed $default Value to return if given prop not exists
-	 * @return Base
+	 * @return Component
 	 */
 	// protected function setProp(array $prop_array)
 	// {
@@ -295,7 +295,7 @@ abstract class Base
 	/**
 	 * Check whether client has given all required properties. If not, throw an error
 	 *
-	 * @uses Base::getComponentNameFromClass()
+	 * @uses Component::getComponentNameFromClass()
 	 * @return void
 	 */
 	protected function checkRequiredProps()
@@ -315,11 +315,11 @@ abstract class Base
 	/**
 	 * Qualification of component's restricted properties. In other words, client-given property validation.
 	 *
-	 * @uses Base::getPropValidationRuleName() to get prop validation rule
-	 * @uses Base::requiredValidationPropTypeIs() to check type of client-given prop
-	 * @uses Base::requiredValidationPropIsIn() to check if client-given prop is one of specific value
-	 * @uses Base::requiredValidationPropIsNotIn() to check if client-given prop is not one of specific value
-	 * @param string $name Key of UIFactory\Component\Base::$requiredValidationProps to get validation rule
+	 * @uses Component::getPropValidationRuleName() to get prop validation rule
+	 * @uses Component::requiredValidationPropTypeIs() to check type of client-given prop
+	 * @uses Component::requiredValidationPropIsIn() to check if client-given prop is one of specific value
+	 * @uses Component::requiredValidationPropIsNotIn() to check if client-given prop is not one of specific value
+	 * @param string $name Key of UIFactory\Components\Component::$requiredValidationProps to get validation rule
 	 * @param mixed $value Value of client-given prop to validate
 	 * @return void
 	 */
@@ -358,7 +358,7 @@ abstract class Base
 	/**
 	 * Validate client-given prop by type of prop
 	 *
-	 * @param string $rule_value Validation rule from UIFactory\Component\Base::$requiredValidationProps
+	 * @param string $rule_value Validation rule from UIFactory\Components\Component::$requiredValidationProps
 	 * @param mixed $value Client-given value
 	 * @return bool|string True, if client-given prop is valid. Otherwise, error string to use in exception
 	 */
@@ -384,9 +384,9 @@ abstract class Base
 	}
 
 	/**
-	 * Validate that client-given prop must be one of specific value specified in inherited class of UIFactory\Component\Base
+	 * Validate that client-given prop must be one of specific value specified in inherited class of UIFactory\Components\Component
 	 *
-	 * @param string $rule_value Validation rule from UIFactory\Component\Base::$requiredValidationProps
+	 * @param string $rule_value Validation rule from UIFactory\Components\Component::$requiredValidationProps
 	 * @param mixed $value Client-given value
 	 * @return bool|string True, if client-given prop is valid. Otherwise, error string to use in exception
 	 */
@@ -401,9 +401,9 @@ abstract class Base
 	}
 
 	/**
-	 * Validate that client-given prop must NOT be one of specific value specified in inherited class of UIFactory\Component\Base
+	 * Validate that client-given prop must NOT be one of specific value specified in inherited class of UIFactory\Components\Component
 	 *
-	 * @param string $rule_value Validation rule from UIFactory\Component\Base::$requiredValidationProps
+	 * @param string $rule_value Validation rule from UIFactory\Components\Component::$requiredValidationProps
 	 * @param mixed $value Client-given value
 	 * @return bool|string True, if client-given prop is valid. Otherwise, error string to use in exception
 	 */
@@ -419,8 +419,8 @@ abstract class Base
 	/**
 	 * Get prop validation rule
 	 *
-	 * @param string $name Key of UIFactory\Component\Base::$requiredValidationProps to get validation rule
-	 * @return string|array Validation rule from UIFactory\Component\Base::$requiredValidationProps
+	 * @param string $name Key of UIFactory\Components\Component::$requiredValidationProps to get validation rule
+	 * @return string|array Validation rule from UIFactory\Components\Component::$requiredValidationProps
 	 */
 	protected function getPropValidationRuleName(string $name)
 	{

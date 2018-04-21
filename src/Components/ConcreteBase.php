@@ -1,8 +1,10 @@
 <?php
 
-namespace UIFactory\Component;
+namespace UIFactory\Components;
 
-class ConcreteBase extends Base
+use UIFactory\Component;
+
+class ConcreteBase extends Component
 {
 	protected $markupCallbacks = [];
 

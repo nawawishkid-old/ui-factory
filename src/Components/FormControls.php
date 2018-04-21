@@ -1,9 +1,10 @@
 <?php
 
-namespace UIFactory\Component;
+namespace UIFactory\Components;
 
+use UIFactory\Component;
 
-abstract class FormControls extends Base
+abstract class FormControls extends Component
 {
 	/**
 	 * Abstract function for returning HTML markup of this component
