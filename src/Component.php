@@ -175,6 +175,20 @@ abstract class Component
 	 * @param 
 	 * @return 
 	 */
+	public function content(string $name, $content)
+	{
+		$this->props[$name . self::$configs['PROP_CONTENT_SUFFIX']] = $this->getClientContent($content);
+		return $this;
+	}
+
+	/**
+	 *
+	 *
+	 * @api 
+	 * @param 
+	 * @param 
+	 * @return 
+	 */
 	public function prepend(string $name, $content)
 	{
 		$this->injectContentSibling($name, $this->getClientContent($content), false);
@@ -244,7 +258,7 @@ abstract class Component
 
 	private function getClientContent($content)
 	{
-		return is_callable($content) ? $content($this->props) : $content;
+		return is_callable($content) ? $content((object) $this->props) : $content;
 	}
 
 	protected function initContentSiblingProps($props)
