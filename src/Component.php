@@ -300,7 +300,7 @@ abstract class Component
 		$html = '';
 
 		foreach ($this->markupCallbacks as $callback) {
-			$html .= call_user_func_array($callback, [(object) $this->props]);
+			$html .= call_user_func_array($callback, [(object) $this->props, $this]);
 		}
 
 		$this->html = $html;

@@ -6,10 +6,15 @@ use UIFactory\Component;
 
 class Base extends Component
 {
-	protected $markupCallbacks = [];
+	protected $helpers = [];
 
 	protected function markup($props) : string {
 		return '';
+	}
+
+	public function __get($name)
+	{
+		return $this->helpers[$name];
 	}
 
 	public function addMarkup(callable $callback)
@@ -24,39 +29,20 @@ class Base extends Component
 		return $this;
 	}
 
-	// public function editProps(array $props)
-	// {
-	// 	foreach ($props as $key => $value) {
-	// 		if (isset($this->props[$key])) {
-	// 			$this->props[$key] = $value;
-	// 		}
-	// 	}
-	// 	return $this;
-	// }
-
 	public function addRequiredValidationProps(array $prop_rules)
 	{
 		$this->requiredValidationProps = $prop_rules;
 		return $this;
 	}
 
-	// public function make($amount = 1)
-	// {
-	// 	$props = (object) $this->props;
-	// 	$html = ''; // $this->markup($props);
+	public function addHelper(string $name, callable $callback)
+	{
+		$this->helpers[$name] = $callback;
+		return $this;
+	}
 
-	// 	foreach ($this->markupCallbacks as $callback) {
-	// 		$html .= call_user_func_array($callback, [$props]);
-	// 	}
-
-	// 	$this->html = $html;
-
-	// 	return $this;
-	// }
-
-	// public function render()
-	// {
-	// 	$this->make();
-	// 	echo $this->html;
-	// }
+	public function helper(string $name, array $params)
+	{
+		return call_user_func_array($this->{$name}, $params);
+	}
 }
