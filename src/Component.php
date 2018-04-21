@@ -39,7 +39,10 @@ abstract class Component
 	 * @var array $configs Array of component's configuration
 	 */
 	protected static $configs = [
-		'PROP_VALIDATION' => false
+		'PROP_VALIDATION' => false,
+		'PROP_CONTENT_SUFFIX' => 'Content',
+		'PROP_CONTENT_PREPEND_SUFFIX' => 'Before',
+		'PROP_CONTENT_APPEND_SUFFIX' => 'After'
 	];
 
 	/**
@@ -61,6 +64,7 @@ abstract class Component
 	public function __construct(array $props = [], $echo = true)
 	{
 		$this->markupCallbacks[] = [$this, 'markup'];
+		$this->assignBeforeAndAfterContentProps();
 
 		if (! empty($props)) {
 			$this->editProps($props);
@@ -166,6 +170,13 @@ abstract class Component
 	// 	return $this->getProp($prop, $default);
 	// }
 
+	/**
+	 * 
+	 *
+	 * @api
+	 * @param
+	 * @return
+	 */
 	public function editProps(array $props)
 	{
 		// var_dump($props['footerContent']);
@@ -183,6 +194,49 @@ abstract class Component
 		}
 
 		return $this;
+	}
+
+	public function prepend(string $name, $content)
+	{
+		$this->props[$name . self::$configs['PROP_CONTENT_PREPEND_SUFFIX']] = $content;
+		return $this;
+	}
+
+	public function append(string $name, $content)
+	{
+		$this->props[$name . self::$configs['PROP_CONTENT_APPEND_SUFFIX']] = $content;
+		return $this;
+	}
+
+	public function prependIn(string $name, $content)
+	{
+		$prop =& $this->props[$name . self::$configs['PROP_CONTENT_SUFFIX']];
+		$prop = $content . $prop;
+		return $this;
+	}
+
+	public function appendIn(string $name, $content)
+	{
+		$prop =& $this->props[$name . self::$configs['PROP_CONTENT_SUFFIX']];
+		$prop .= $content;
+		return $this;
+	}
+
+	protected function assignBeforeAndAfterContentProps()
+	{
+		foreach ($this->props as $key => $value) {
+			if (mb_substr($key, -7, 7) === self::$configs['PROP_CONTENT_SUFFIX']) {
+				$name = $this->extractPropContentName($key);
+
+				$this->props[$name . self::$configs['PROP_CONTENT_PREPEND_SUFFIX']] = '';
+				$this->props[$name . self::$configs['PROP_CONTENT_APPEND_SUFFIX']] = '';
+			}
+		}
+	}
+
+	protected function extractPropContentName($prop)
+	{
+		return mb_substr($prop, 0, mb_strlen($prop) - mb_strlen(self::$configs['PROP_CONTENT_SUFFIX']));
 	}
 
 	/**
