@@ -224,7 +224,6 @@ abstract class Base
 	 */
 	protected function setProp(array $prop_array)
 	{
-		var_dump($this->config('PROP_VALIDATION'));
 		if (! $this->config('PROP_VALIDATION')) {
 			foreach ($prop_array as $name => $value) {
 				$this->props[$name] = $value;
