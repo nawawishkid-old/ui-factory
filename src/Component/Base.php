@@ -31,6 +31,8 @@ abstract class Base
 		'type', 'in', 'not_in'
 	];
 
+	protected $html = '';
+
 	/**
 	 * @var array $configs Array of component's configuration
 	 */

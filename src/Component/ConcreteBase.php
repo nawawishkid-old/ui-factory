@@ -6,7 +6,7 @@ class ConcreteBase extends Base
 {
 	protected $markupCallbacks = [];
 
-	protected function markup() {}
+	protected function markup() : string {}
 
 	public function addMarkup(callable $callback)
 	{
@@ -30,20 +30,29 @@ class ConcreteBase extends Base
 		return $this;
 	}
 
-	public function make()
+	public function addRequiredValidationProps(array $prop_rules)
+	{
+		$this->requiredValidationProps = $prop_rules;
+		return $this;
+	}
+
+	public function make($amount = 1)
 	{
 		$props = (object) $this->props;
-		$html = $this->markup($props);
+		$html = ''; // $this->markup($props);
 
-		foreach ($this->markupCallbacks as $key => $value) {
-			$html .= call_user_func_array($callback, [$props])
+		foreach ($this->markupCallbacks as $callback) {
+			$html .= call_user_func_array($callback, [$props]);
 		}
 
 		$this->html = $html;
+
+		return $this;
 	}
 
 	public function render()
 	{
-
+		$this->make();
+		echo $this->html;
 	}
 }
