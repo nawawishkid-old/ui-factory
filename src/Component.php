@@ -258,7 +258,9 @@ abstract class Component
 
 	private function getClientContent($content)
 	{
-		return is_callable($content) ? $content((object) $this->props) : $content;
+		return is_callable($content) 
+					? call_user_func_array($content, [(object) $this->props, $this]) 
+					: $content;
 	}
 
 	protected function initContentSiblingProps($props)
