@@ -64,7 +64,7 @@ abstract class Component
 	public function __construct(array $props = [], $echo = true)
 	{
 		$this->markupCallbacks[] = [$this, 'markup'];
-		$this->assignBeforeAndAfterContentProps();
+		$this->initContentSiblingProps($this->props);
 
 		if (! empty($props)) {
 			$this->editProps($props);
@@ -73,14 +73,6 @@ abstract class Component
 		if ($echo) {
 			$this->render();
 		}
-
-		// if (! empty($props)) {
-		// 	$this->prop($props);
-		// }
-
-		// if ($echo) {
-		// 	$this->print($echo);
-		// }
 	}
 
 	public function __get($name)
@@ -149,26 +141,6 @@ abstract class Component
 		call_user_func_array($callback, [$this]);
 		return $this;
 	}
-	
-	/**
-	 * Get/set component's properties in single method
-	 *
-	 * @api
-	 * @uses Component::setProp() to set prop
-	 * @uses Component::getProp() to get prop
-	 * @param string|array $prop Name or array of name-value pairs of properties. string is getting, array is setting
-	 * @param mixed $default Value to return if given prop not exists
-	 * @return mixed
-	 */
-	// public function prop($prop, $default = '')
-	// {
-	// 	if (is_array($prop)) {
-	// 		$this->setProp($prop, $default);
-	// 		return $this;
-	// 	}
-
-	// 	return $this->getProp($prop, $default);
-	// }
 
 	/**
 	 * 
@@ -179,7 +151,6 @@ abstract class Component
 	 */
 	public function editProps(array $props)
 	{
-		// var_dump($props['footerContent']);
 		foreach ($props as $key => $value) {
 			if (! $this->config('PROP_VALIDATION')) {
 				if (isset($this->props[$key]) || in_array($key, array_values($this->requiredProps))) {
@@ -196,36 +167,94 @@ abstract class Component
 		return $this;
 	}
 
+	/**
+	 *
+	 *
+	 * @api 
+	 * @param 
+	 * @param 
+	 * @return 
+	 */
 	public function prepend(string $name, $content)
 	{
-		$this->props[$name . self::$configs['PROP_CONTENT_PREPEND_SUFFIX']] = $content;
+		$this->injectContentSibling($name, $this->getClientContent($content), false);
 		return $this;
 	}
 
+	/**
+	 *
+	 *
+	 * @api 
+	 * @param 
+	 * @param 
+	 * @return 
+	 */
 	public function append(string $name, $content)
 	{
-		$this->props[$name . self::$configs['PROP_CONTENT_APPEND_SUFFIX']] = $content;
+		$this->injectContentSibling($name, $this->getClientContent($content));
 		return $this;
 	}
 
-	public function prependIn(string $name, $content)
+	/**
+	 *
+	 *
+	 * @api 
+	 * @param 
+	 * @param 
+	 * @return 
+	 */
+	public function prependChild(string $name, $content)
+	{
+		$this->injectContentChild($name, $this->getClientContent($content), false);
+		return $this;
+	}
+
+	/**
+	 *
+	 *
+	 * @api 
+	 * @param 
+	 * @param 
+	 * @return 
+	 */
+	public function appendChild(string $name, $content)
+	{
+		$this->injectContentChild($name, $this->getClientContent($content));
+		return $this;
+	}
+
+	protected function injectContentChild(string $name, $content, $append = true)
 	{
 		$prop =& $this->props[$name . self::$configs['PROP_CONTENT_SUFFIX']];
-		$prop = $content . $prop;
-		return $this;
+		$prop = $this->concatString($prop, $content, $append);
 	}
 
-	public function appendIn(string $name, $content)
+	protected function injectContentSibling(string $name, $content, $append = true)
 	{
-		$prop =& $this->props[$name . self::$configs['PROP_CONTENT_SUFFIX']];
-		$prop .= $content;
-		return $this;
+		$suffix = $append ? 'PROP_CONTENT_APPEND_SUFFIX' : 'PROP_CONTENT_PREPEND_SUFFIX';
+
+		$prop =& $this->props[$name . self::$configs[$suffix]];
+		$prop = $this->concatString($prop, $content, $append);
 	}
 
-	protected function assignBeforeAndAfterContentProps()
+	private function concatString(string $old_string, string $new_string, $append = true)
 	{
-		foreach ($this->props as $key => $value) {
-			if (mb_substr($key, -7, 7) === self::$configs['PROP_CONTENT_SUFFIX']) {
+		return $append ? $old_string . $new_string : $new_string . $old_string;
+	}
+
+	protected function getClientContent($content)
+	{
+		return is_callable($content) ? $content($this->props) : $content;
+	}
+
+	protected function initContentSiblingProps($props)
+	{
+		$content_suffix_length = mb_strlen(self::$configs['PROP_CONTENT_SUFFIX']);
+
+		foreach ($props as $key => $value) {
+			$content_suffix = mb_substr($key, -$content_suffix_length, $content_suffix_length);
+
+			if ($content_suffix === self::$configs['PROP_CONTENT_SUFFIX']) {
 				$name = $this->extractPropContentName($key);
 
 				$this->props[$name . self::$configs['PROP_CONTENT_PREPEND_SUFFIX']] = '';
@@ -238,22 +267,6 @@ abstract class Component
 	{
 		return mb_substr($prop, 0, mb_strlen($prop) - mb_strlen(self::$configs['PROP_CONTENT_SUFFIX']));
 	}
-
-	/**
-	 * Get component's markup from Component::$html
-	 *
-	 * @uses Component::make() to assign markup to Component::$html if it has not assigned yet.
-	 * @param int $amount @see Component::makeMultiple()
-	 * @return string HTML markup of this component
-	 */
-	// protected function getHTML(int $amount = 1)
-	// {
-	// 	if (! isset($this->html) || empty($this->html)) {
-	// 		$this->make($amount);
-	// 	}
-
-	// 	return $this->html;
-	// }
 
 	/**
 	 * Assign component's markup to Component::$html
@@ -277,73 +290,7 @@ abstract class Component
 		$this->html = $html;
 
 		return $this;
-
-		// if ($amount > 1) {
-		// 	$this->makeMultiple($amount);
-		// } elseif ($amount === 1) {
-		// 	$this->html = $this->markup();
-		// }
-
-		// return $this;
 	}
-
-	/**
-	 * Assign multiple component's duplication to Component::$html
-	 *
-	 * @uses Component::markup() to get component's markup
-	 * @param int $amount Number of component's duplication
-	 * @return
-	 */
-	// protected function makeMultiple(int $amount)
-	// {
-	// 	$markups = '';
-
-	// 	foreach (range(1, $amount) as $index) {
-	// 		$markups .= $this->markup();
-	// 	}
-
-	// 	$this->html = $markups;
-	// }
-
-	/**
-	 * Get component's property
-	 *
-	 * @param string $prop_name Name of property
-	 * @param mixed $default Value to return if given prop not exists
-	 * @return mixed Component's property
-	 */
-	// protected function getProp(string $prop_name, $default = '')
-	// {
-	// 	return isset($this->props[$prop_name]) 
-	// 				? $this->props[$prop_name] 
-	// 				: $default;
-	// }
-
-	/**
-	 * Set component's property
-	 *
-	 * @uses Component::config()
-	 * @param array $prop_array Array of name-value pairs of property
-	 * @param mixed $default Value to return if given prop not exists
-	 * @return Component
-	 */
-	// protected function setProp(array $prop_array)
-	// {
-	// 	if (! $this->config('PROP_VALIDATION')) {
-	// 		foreach ($prop_array as $name => $value) {
-	// 			$this->props[$name] = $value;
-	// 		}
-
-	// 		return $this;
-	// 	}
-
-	// 	foreach ($prop_array as $name => $value) {
-	// 		$this->validateRequiredValidationProp($name, $value);
-	// 		$this->props[$name] = $value;
-	// 	}
-
-	// 	return $this;
-	// }
 
 	/**
 	 * Check whether client has given all required properties. If not, throw an error
@@ -425,10 +372,6 @@ abstract class Component
 			$valid = in_array(gettype($value), $rule_value);
 		}
 
-		// $valid = in_array($rule_value, $type)
-		// 			? call_user_func_array('is_' . $rule_value, [$value])
-		// 			: is_a($value, $rule_value);
-
 		if (! $valid) {
 			return "Type of given prop must be $rule_value, " . gettype($value) . " given.";
 		}
@@ -478,9 +421,6 @@ abstract class Component
 	protected function getPropValidationRuleName(string $name)
 	{
 		$rule_name = $this->requiredValidationProps[$name][0];
-		// $rule = is_string($raw_rule)
-		// 			? 'type'
-		// 			: (is_array($raw_rule) ? $raw_rule[0] : null);
 
 		if (! in_array($rule_name, self::$availablePropValidationRules)) {
 			throw new Exception("'$rule_name' is not a valid prop validation rule.");
