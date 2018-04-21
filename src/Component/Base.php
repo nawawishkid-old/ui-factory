@@ -79,6 +79,11 @@ abstract class Base
 		// }
 	}
 
+	public function __get($name)
+	{
+		return isset($this->props[$name]) ? $this->props[$name] : null;
+	}
+
 	/**
 	 * Return component markup
 	 *
@@ -164,6 +169,14 @@ abstract class Base
 	public function editProps(array $props)
 	{
 		foreach ($props as $key => $value) {
+			if (! $this->config('PROP_VALIDATION')) {
+				if (isset($this->props[$key]) || in_array($key, array_values($this->requiredProps))) {
+					$this->props[$key] = $value;
+				}
+
+				return $this;
+			}
+
 			if (isset($this->props[$key]) || in_array($key, array_values($this->requiredProps))) {
 				$this->validateRequiredValidationProp($key, $value);
 				$this->props[$key] = $value;
