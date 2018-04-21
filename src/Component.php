@@ -180,8 +180,6 @@ abstract class Component
 				$this->validateRequiredValidationProp($key, $value);
 				$this->props[$key] = $value;
 			}
-
-			continue;
 		}
 
 		return $this;
