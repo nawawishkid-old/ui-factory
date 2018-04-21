@@ -25,7 +25,7 @@ abstract class Base
 	protected $requiredValidationProps = [];
 
 	/**
-	 * @var array $availablePropValidationRules Different type of prop validation rules. Use in Base::getPropValidationRule()
+	 * @var array $availablePropValidationRules Different type of prop validation rules. Use in Base::getPropValidationRuleName()
 	 */
 	private static $availablePropValidationRules = [
 		'type', 'in', 'not_in'
@@ -55,7 +55,9 @@ abstract class Base
 	 */
 	public function __construct(array $props = [], $echo = 1)
 	{
-		$this->prop($props);
+		if (! empty($props)) {
+			$this->prop($props);
+		}
 
 		if ($echo) {
 			$this->print($echo);
@@ -222,6 +224,7 @@ abstract class Base
 	 */
 	protected function setProp(array $prop_array)
 	{
+		var_dump($this->config('PROP_VALIDATION'));
 		if (! $this->config('PROP_VALIDATION')) {
 			foreach ($prop_array as $name => $value) {
 				$this->props[$name] = $value;
@@ -261,7 +264,7 @@ abstract class Base
 	/**
 	 * Qualification of component's restricted properties. In other words, client-given property validation.
 	 *
-	 * @uses Base::getPropValidationRule() to get prop validation rule
+	 * @uses Base::getPropValidationRuleName() to get prop validation rule
 	 * @uses Base::requiredValidationPropTypeIs() to check type of client-given prop
 	 * @uses Base::requiredValidationPropIsIn() to check if client-given prop is one of specific value
 	 * @uses Base::requiredValidationPropIsNotIn() to check if client-given prop is not one of specific value
@@ -275,17 +278,23 @@ abstract class Base
 			return;
 		}
 
-		$rule_value = $this->requiredValidationProps[$name];
+		$rule = $this->requiredValidationProps[$name];
+		$rule_name = $rule[0];
+		$rule_value = $rule[1];
 
-		switch ($this->getPropValidationRule($name)) {
+		if (! $this->propValidationRuleNameIsValid($rule_name)) {
+			throw new Exception("'$rule_name' is not a valid prop validation rule.");
+		}
+
+		switch ($rule_name) {
 			case 'type':
 				$valid = $this->requiredValidationPropTypeIs($rule_value, $value);
 				break;
 			case 'in':
-				$valid = $this->requiredValidationPropIsIn($rule_value[1], $value);
+				$valid = $this->requiredValidationPropIsIn($rule_value, $value);
 				break;
 			case 'not_in':
-				$valid = $this->requiredValidationPropIsNotIn($rule_value[1], $value);
+				$valid = $this->requiredValidationPropIsNotIn($rule_value, $value);
 				break;
 		}
 
@@ -302,13 +311,19 @@ abstract class Base
 	 * @param mixed $value Client-given value
 	 * @return bool|string True, if client-given prop is valid. Otherwise, error string to use in exception
 	 */
-	protected function requiredValidationPropTypeIs(string $rule_value, $value)
+	protected function requiredValidationPropTypeIs($rule_value, $value)
 	{
 		$type = ['string', 'array', 'bool', 'int', 'float', 'callable'];
 
-		$valid = in_array($rule_value, $type)
-					? call_user_func_array('is_' . $rule_value, [$value])
-					: is_a($value, $rule_value);
+		if (is_string($rule_value)) {
+			$valid = gettype($value) === $rule_value;
+		} elseif (is_array($rule_value)) {
+			$valid = in_array(gettype($value), $rule_value);
+		}
+
+		// $valid = in_array($rule_value, $type)
+		// 			? call_user_func_array('is_' . $rule_value, [$value])
+		// 			: is_a($value, $rule_value);
 
 		if (! $valid) {
 			return "Type of given prop must be $rule_value, " . gettype($value) . " given.";
@@ -356,19 +371,28 @@ abstract class Base
 	 * @param string $name Key of UIFactory\Component\Base::$requiredValidationProps to get validation rule
 	 * @return string|array Validation rule from UIFactory\Component\Base::$requiredValidationProps
 	 */
-	protected function getPropValidationRule(string $name)
+	protected function getPropValidationRuleName(string $name)
 	{
-		$raw_rule = $this->requiredValidationProps[$name];
-		$rule = is_string($raw_rule)
-					? 'type'
-					: (is_array($raw_rule) ? $raw_rule[0] : null);
+		$rule_name = $this->requiredValidationProps[$name][0];
+		// $rule = is_string($raw_rule)
+		// 			? 'type'
+		// 			: (is_array($raw_rule) ? $raw_rule[0] : null);
 
-		if (! in_array($rule, self::$availablePropValidationRules)) {
-			throw new Exception("'$rule' is not a valid prop validation rule.");
+		if (! in_array($rule_name, self::$availablePropValidationRules)) {
+			throw new Exception("'$rule_name' is not a valid prop validation rule.");
 			
 		}
 
-		return $rule;
+		return $rule_name;
+	}
+
+	protected function propValidationRuleNameIsValid(string $name)
+	{
+		if (! in_array($name, self::$availablePropValidationRules)) {
+			return false;
+		}
+
+		return true;
 	}
 
 	protected function getComponentNameFromClass($component)
