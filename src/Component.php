@@ -3,12 +3,15 @@
 namespace UIFactory;
 
 use Exception;
+use UIFactory\Helpers\ComponentAttribute;
 
 /**
  * Base class for component class to extends
  */
 abstract class Component
 {
+	use ComponentAttribute;
+	
 	/**
 	 * @var array $props Array of default properties for building this component.
 	 */
