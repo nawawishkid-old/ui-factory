@@ -223,13 +223,13 @@ abstract class Component
 		return $this;
 	}
 
-	protected function injectContentChild(string $name, $content, $append = true)
+	private function injectContentChild(string $name, $content, $append = true)
 	{
 		$prop =& $this->props[$name . self::$configs['PROP_CONTENT_SUFFIX']];
 		$prop = $this->concatString($prop, $content, $append);
 	}
 
-	protected function injectContentSibling(string $name, $content, $append = true)
+	private function injectContentSibling(string $name, $content, $append = true)
 	{
 		$suffix = $append ? 'PROP_CONTENT_APPEND_SUFFIX' : 'PROP_CONTENT_PREPEND_SUFFIX';
 
@@ -242,7 +242,7 @@ abstract class Component
 		return $append ? $old_string . $new_string : $new_string . $old_string;
 	}
 
-	protected function getClientContent($content)
+	private function getClientContent($content)
 	{
 		return is_callable($content) ? $content($this->props) : $content;
 	}
@@ -263,7 +263,7 @@ abstract class Component
 		}
 	}
 
-	protected function extractPropContentName($prop)
+	private function extractPropContentName($prop)
 	{
 		return mb_substr($prop, 0, mb_strlen($prop) - mb_strlen(self::$configs['PROP_CONTENT_SUFFIX']));
 	}
@@ -298,7 +298,7 @@ abstract class Component
 	 * @uses Component::getComponentNameFromClass()
 	 * @return void
 	 */
-	protected function checkRequiredProps()
+	private function checkRequiredProps()
 	{
 		$prop_name = array_keys($this->props);
 
@@ -323,7 +323,7 @@ abstract class Component
 	 * @param mixed $value Value of client-given prop to validate
 	 * @return void
 	 */
-	protected function validateRequiredValidationProp(string $name, $value)
+	private function validateRequiredValidationProp(string $name, $value)
 	{
 		if (! isset($this->requiredValidationProps[$name])) {
 			return;
@@ -362,7 +362,7 @@ abstract class Component
 	 * @param mixed $value Client-given value
 	 * @return bool|string True, if client-given prop is valid. Otherwise, error string to use in exception
 	 */
-	protected function requiredValidationPropTypeIs($rule_value, $value)
+	private function requiredValidationPropTypeIs($rule_value, $value)
 	{
 		$type = ['string', 'array', 'bool', 'int', 'float', 'callable'];
 
@@ -386,7 +386,7 @@ abstract class Component
 	 * @param mixed $value Client-given value
 	 * @return bool|string True, if client-given prop is valid. Otherwise, error string to use in exception
 	 */
-	protected function requiredValidationPropIsIn(array $rule_value, $value)
+	private function requiredValidationPropIsIn(array $rule_value, $value)
 	{
 		if (! in_array($value, $rule_value)) {
 			return "Given prop must be one of " . implode(', ', $rule_value);
@@ -403,7 +403,7 @@ abstract class Component
 	 * @param mixed $value Client-given value
 	 * @return bool|string True, if client-given prop is valid. Otherwise, error string to use in exception
 	 */
-	protected function requiredValidationPropIsNotIn(array $rule_value, $value)
+	private function requiredValidationPropIsNotIn(array $rule_value, $value)
 	{
 		if ($this->requiredValidationPropIsIn($rule_value, $value) === true) {
 			return "Given prop must not be one of " . implode(', ', $rule_value);
@@ -418,7 +418,7 @@ abstract class Component
 	 * @param string $name Key of UIFactory\Components\Component::$requiredValidationProps to get validation rule
 	 * @return string|array Validation rule from UIFactory\Components\Component::$requiredValidationProps
 	 */
-	protected function getPropValidationRuleName(string $name)
+	private function getPropValidationRuleName(string $name)
 	{
 		$rule_name = $this->requiredValidationProps[$name][0];
 
@@ -430,7 +430,7 @@ abstract class Component
 		return $rule_name;
 	}
 
-	protected function propValidationRuleNameIsValid(string $name)
+	private function propValidationRuleNameIsValid(string $name)
 	{
 		if (! in_array($name, self::$availablePropValidationRules)) {
 			return false;
