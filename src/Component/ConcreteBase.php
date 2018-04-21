@@ -6,7 +6,9 @@ class ConcreteBase extends Base
 {
 	protected $markupCallbacks = [];
 
-	protected function markup() : string {}
+	protected function markup($props) : string {
+		return '';
+	}
 
 	public function addMarkup(callable $callback)
 	{
@@ -20,15 +22,15 @@ class ConcreteBase extends Base
 		return $this;
 	}
 
-	public function editProps(array $props)
-	{
-		foreach ($props as $key => $value) {
-			if (isset($this->props[$key])) {
-				$this->props[$key] = $value;
-			}
-		}
-		return $this;
-	}
+	// public function editProps(array $props)
+	// {
+	// 	foreach ($props as $key => $value) {
+	// 		if (isset($this->props[$key])) {
+	// 			$this->props[$key] = $value;
+	// 		}
+	// 	}
+	// 	return $this;
+	// }
 
 	public function addRequiredValidationProps(array $prop_rules)
 	{
@@ -36,23 +38,23 @@ class ConcreteBase extends Base
 		return $this;
 	}
 
-	public function make($amount = 1)
-	{
-		$props = (object) $this->props;
-		$html = ''; // $this->markup($props);
+	// public function make($amount = 1)
+	// {
+	// 	$props = (object) $this->props;
+	// 	$html = ''; // $this->markup($props);
 
-		foreach ($this->markupCallbacks as $callback) {
-			$html .= call_user_func_array($callback, [$props]);
-		}
+	// 	foreach ($this->markupCallbacks as $callback) {
+	// 		$html .= call_user_func_array($callback, [$props]);
+	// 	}
 
-		$this->html = $html;
+	// 	$this->html = $html;
 
-		return $this;
-	}
+	// 	return $this;
+	// }
 
-	public function render()
-	{
-		$this->make();
-		echo $this->html;
-	}
+	// public function render()
+	// {
+	// 	$this->make();
+	// 	echo $this->html;
+	// }
 }

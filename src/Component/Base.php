@@ -31,6 +31,8 @@ abstract class Base
 		'type', 'in', 'not_in'
 	];
 
+	protected $markupCallbacks = [];
+
 	protected $html = '';
 
 	/**
@@ -43,9 +45,10 @@ abstract class Base
 	/**
 	 * Abstract function for returning HTML markup of this component
 	 *
+	 * @param \stdClass $props Component's property
 	 * @return string HTML markup
 	 */
-	abstract protected function markup() : string;
+	abstract protected function markup($props) : string;
 
 	/**
 	 * Set theme and echo this component if requires
@@ -55,15 +58,25 @@ abstract class Base
 	 * @param mixed $echo Echo the component immediately?
 	 * @return void
 	 */
-	public function __construct(array $props = [], $echo = 1)
+	public function __construct(array $props = [], $echo = true)
 	{
+		$this->markupCallbacks[] = [$this, 'markup'];
+
 		if (! empty($props)) {
-			$this->prop($props);
+			$this->editProps($props);
 		}
 
 		if ($echo) {
-			$this->print($echo);
+			$this->render();
 		}
+
+		// if (! empty($props)) {
+		// 	$this->prop($props);
+		// }
+
+		// if ($echo) {
+		// 	$this->print($echo);
+		// }
 	}
 
 	/**
@@ -74,9 +87,10 @@ abstract class Base
 	 * @param int $amount Number of component's duplication
 	 * @return string HTML markup of this component
 	 */
-	public function get($amount = 1)
+	public function get()
 	{
-		return $this->getHTML($amount);
+		$this->make();
+		return $this->html;
 	}
 
 	/**
@@ -86,9 +100,10 @@ abstract class Base
 	 * @uses Base::markup() to get component HTML markup
 	 * @return void
 	 */
-	public function print($amount = 1)
+	public function render()
 	{
-		echo $this->getHTML($amount);
+		$this->make();
+		echo $this->html;
 	}
 
 	/**
@@ -136,14 +151,26 @@ abstract class Base
 	 * @param mixed $default Value to return if given prop not exists
 	 * @return mixed
 	 */
-	public function prop($prop, $default = '')
+	// public function prop($prop, $default = '')
+	// {
+	// 	if (is_array($prop)) {
+	// 		$this->setProp($prop, $default);
+	// 		return $this;
+	// 	}
+
+	// 	return $this->getProp($prop, $default);
+	// }
+
+	public function editProps(array $props)
 	{
-		if (is_array($prop)) {
-			$this->setProp($prop, $default);
-			return $this;
+		foreach ($props as $key => $value) {
+			if (isset($this->props[$key]) || in_array($key, array_values($this->requiredProps))) {
+				$this->validateRequiredValidationProp($key, $value);
+				$this->props[$key] = $value;
+			}
 		}
 
-		return $this->getProp($prop, $default);
+		return $this;
 	}
 
 	/**
@@ -153,14 +180,14 @@ abstract class Base
 	 * @param int $amount @see Base::makeMultiple()
 	 * @return string HTML markup of this component
 	 */
-	protected function getHTML(int $amount = 1)
-	{
-		if (! isset($this->html) || empty($this->html)) {
-			$this->make($amount);
-		}
+	// protected function getHTML(int $amount = 1)
+	// {
+	// 	if (! isset($this->html) || empty($this->html)) {
+	// 		$this->make($amount);
+	// 	}
 
-		return $this->html;
-	}
+	// 	return $this->html;
+	// }
 
 	/**
 	 * Assign component's markup to Base::$html
@@ -175,13 +202,23 @@ abstract class Base
 	{
 		$this->checkRequiredProps();
 
-		if ($amount > 1) {
-			$this->makeMultiple($amount);
-		} elseif ($amount === 1) {
-			$this->html = $this->markup();
+		$html = '';
+
+		foreach ($this->markupCallbacks as $callback) {
+			$html .= call_user_func_array($callback, [(object) $this->props]);
 		}
 
+		$this->html = $html;
+
 		return $this;
+
+		// if ($amount > 1) {
+		// 	$this->makeMultiple($amount);
+		// } elseif ($amount === 1) {
+		// 	$this->html = $this->markup();
+		// }
+
+		// return $this;
 	}
 
 	/**
@@ -191,16 +228,16 @@ abstract class Base
 	 * @param int $amount Number of component's duplication
 	 * @return
 	 */
-	protected function makeMultiple(int $amount)
-	{
-		$markups = '';
+	// protected function makeMultiple(int $amount)
+	// {
+	// 	$markups = '';
 
-		foreach (range(1, $amount) as $index) {
-			$markups .= $this->markup();
-		}
+	// 	foreach (range(1, $amount) as $index) {
+	// 		$markups .= $this->markup();
+	// 	}
 
-		$this->html = $markups;
-	}
+	// 	$this->html = $markups;
+	// }
 
 	/**
 	 * Get component's property
@@ -209,12 +246,12 @@ abstract class Base
 	 * @param mixed $default Value to return if given prop not exists
 	 * @return mixed Component's property
 	 */
-	protected function getProp(string $prop_name, $default = '')
-	{
-		return isset($this->props[$prop_name]) 
-					? $this->props[$prop_name] 
-					: $default;
-	}
+	// protected function getProp(string $prop_name, $default = '')
+	// {
+	// 	return isset($this->props[$prop_name]) 
+	// 				? $this->props[$prop_name] 
+	// 				: $default;
+	// }
 
 	/**
 	 * Set component's property
@@ -224,23 +261,23 @@ abstract class Base
 	 * @param mixed $default Value to return if given prop not exists
 	 * @return Base
 	 */
-	protected function setProp(array $prop_array)
-	{
-		if (! $this->config('PROP_VALIDATION')) {
-			foreach ($prop_array as $name => $value) {
-				$this->props[$name] = $value;
-			}
+	// protected function setProp(array $prop_array)
+	// {
+	// 	if (! $this->config('PROP_VALIDATION')) {
+	// 		foreach ($prop_array as $name => $value) {
+	// 			$this->props[$name] = $value;
+	// 		}
 
-			return $this;
-		}
+	// 		return $this;
+	// 	}
 
-		foreach ($prop_array as $name => $value) {
-			$this->validateRequiredValidationProp($name, $value);
-			$this->props[$name] = $value;
-		}
+	// 	foreach ($prop_array as $name => $value) {
+	// 		$this->validateRequiredValidationProp($name, $value);
+	// 		$this->props[$name] = $value;
+	// 	}
 
-		return $this;
-	}
+	// 	return $this;
+	// }
 
 	/**
 	 * Check whether client has given all required properties. If not, throw an error
