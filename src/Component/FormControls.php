@@ -15,21 +15,21 @@ abstract class FormControls extends Base
 	protected function required()
 	{
 		// propExists($prop); // search prop value, not key
-		return $this->prop('required') ? 'required' : '';
+		return $this->props['required'] ? 'required' : '';
 	}
 
 	protected function disabled()
 	{
-		return $this->prop('disabled') ? 'disabled' : '';
+		return $this->props['disabled'] ? 'disabled' : '';
 	}
 
 	protected function checked()
 	{
-		return $this->prop('checked') ? 'checked' : '';
+		return $this->props['checked'] ? 'checked' : '';
 	}
 
 	protected function readonly()
 	{
-		return $this->prop('readonly') ? 'readonly' : '';
+		return $this->props['readonly'] ? 'readonly' : '';
 	}
 }
