@@ -4,7 +4,7 @@ namespace UIFactory\Components;
 
 use UIFactory\Component;
 
-class ConcreteBase extends Component
+class Base extends Component
 {
 	protected $markupCallbacks = [];
 
