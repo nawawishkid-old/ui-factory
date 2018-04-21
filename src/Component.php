@@ -168,19 +168,20 @@ abstract class Component
 
 	public function editProps(array $props)
 	{
+		// var_dump($props['footerContent']);
 		foreach ($props as $key => $value) {
 			if (! $this->config('PROP_VALIDATION')) {
 				if (isset($this->props[$key]) || in_array($key, array_values($this->requiredProps))) {
 					$this->props[$key] = $value;
 				}
-
-				return $this;
 			}
 
 			if (isset($this->props[$key]) || in_array($key, array_values($this->requiredProps))) {
 				$this->validateRequiredValidationProp($key, $value);
 				$this->props[$key] = $value;
 			}
+
+			continue;
 		}
 
 		return $this;
