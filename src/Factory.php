@@ -2,6 +2,7 @@
 
 namespace UIFactory;
 
+use UIFactory\Component;
 use UIFactory\Components\Base;
 
 class Factory
@@ -106,5 +107,15 @@ class Factory
 		}
 
 		echo "<$tag $attr {$src_attr}=\"$src\"></$tag>";
+	}
+
+	public function renderMany(Component $component, int $amount, callable $callback = null)
+	{
+		foreach (range(1, $amount) as $index) {
+			call_user_func_array($callback, [$component, $index]);
+			$component->render();
+		}
+
+		return $this;
 	}
 }
