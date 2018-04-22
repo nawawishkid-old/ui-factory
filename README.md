@@ -80,13 +80,13 @@ use UIFactory\Components\Base;
 
 $button = new Base();
 $button->addProps([
-			'label' => 'Click me!',
-			'class' => 'btn btn-primary'
-		])
-		->addMarkup(function($props) {
-			return "<button class=\"$props->class\">$props->label</button>";
-		})
-		->render();
+    			'label' => 'Click me!',
+    			'class' => 'btn btn-primary'
+    		])
+    		->addMarkup(function($props) {
+    			return "<button class=\"$props->class\">$props->label</button>";
+    		})
+    		->render();
 ```
 อืม... แต่นี้แหละครับ ไม่ต้องอธิบายเนาะ ผลลัพธ์ที่ได้เหมือน `Button` class ข้างบนนั่นทุกประการ
 
@@ -103,10 +103,10 @@ $btn = new Button([], 0);
 $btn->render(); // default
 
 $btn->editProps([
-		'label' => "Don't click me!",
-		'class' => 'btn-dont-click'
-	])
-	->render();
+    		'label' => "Don't click me!",
+    		'class' => 'btn-dont-click'
+    	])
+    	->render();
 ```
 HTML output:
 ```html
