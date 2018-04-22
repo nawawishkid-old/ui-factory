@@ -3,15 +3,12 @@
 namespace UIFactory;
 
 use Exception;
-use UIFactory\Helpers\ComponentAttribute;
 
 /**
  * Base class for component class to extends
  */
 abstract class Component
 {
-	use ComponentAttribute;
-
 	/**
 	 * @var array $props Array of default properties for building this component.
 	 */
@@ -69,7 +66,6 @@ abstract class Component
 	{
 		$this->markupCallbacks[] = [$this, 'markup'];
 		$this->initHTMLElementSiblingProps($this->props);
-		$this->initHTMLElementAttributeProps($this->props);
 
 		if (! empty($props)) {
 			$this->editProps($props);
@@ -287,21 +283,6 @@ abstract class Component
 	private function extractPropContentName($prop)
 	{
 		return mb_substr($prop, 0, mb_strlen($prop) - mb_strlen(self::$configs['PROP_ELEMENT_CONTENT_SUFFIX']));
-	}
-
-	private function initHTMLElementAttributeProps($props)
-	{
-		$attr_suffix_length = mb_strlen(self::$configs['PROP_ELEMENT_ATTRIBUTE_SUFFIX']);
-
-		foreach ($props as $key => $value) {
-			$attr_suffix = mb_substr($key, -$attr_suffix_length, $attr_suffix_length);
-
-			if ($attr_suffix === self::$configs['PROP_ELEMENT_ATTRIBUTE_SUFFIX']) {
-				$name = $this->extractPropContentName($key);
-
-				$this->props[$name . self::$configs['PROP_ELEMENT_SIBLING_PREVIOUS_SUFFIX']] = [];
-			}
-		}
 	}
 
 	/**
