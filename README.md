@@ -20,17 +20,17 @@ use UIFactory\Component;
 
 class Button extends Component
 {
-	public function markup($props) : string
-	{
-		return '<button class="btn btn-primary">Click me!</button>';
-	}
+    public function markup($props) : string
+    {
+        return '<button class="btn btn-primary">Click me!</button>';
+    }
 }
 ```
 แค่นี้ละครับ ได้ละ basic component ที่ใช้ Bootstrap เป็น CSS library  
 แต่ถ้าจะเขียนแค่นี้ ไม่ต้องไป extends class อื่นให้วุ่นวายหรอกเนอะ จับ markup string ใส่ใน global function ก็ใช้ได้ละ:
 ```php
 function button() {
-	return '<button class="btn btn-primary">Click me!</button>';
+    return '<button class="btn btn-primary">Click me!</button>';
 }
 ```
 
@@ -38,21 +38,21 @@ function button() {
 ```php
 class Button extends Component
 {
-	private $props = [
-		'label' => 'Click me!'
-		'class' => 'btn btn-primary'
-	];
+    private $props = [
+        'label' => 'Click me!'
+        'class' => 'btn btn-primary'
+    ];
 
-	public function markup($props) : string
-	{
-		return (
+    public function markup($props) : string
+    {
+        return (
 <<<HTML
 <button class="$props->class">
-	$props->label
+    $props->label
 </button>
 HTML
-		);
-	}
+        );
+    }
 }
 ```
 จากโค้ดข้างบน `$props` คือ property ของ component ของเรา ตรงตัวเลยนะครับ `$props` เป็น property ของ `Button` แล้วมันคืออะไร? มันคือ array ที่เอาไว้เก็บการตั้งค่าของ component ครับ   
@@ -80,13 +80,13 @@ use UIFactory\Components\Base;
 
 $button = new Base();
 $button->addProps([
-    			'label' => 'Click me!',
-    			'class' => 'btn btn-primary'
-    		])
-    		->addMarkup(function($props) {
-    			return "<button class=\"$props->class\">$props->label</button>";
-    		})
-    		->render();
+            'label' => 'Click me!',
+            'class' => 'btn btn-primary'
+        ])
+        ->addMarkup(function($props) {
+            return "<button class=\"$props->class\">$props->label</button>";
+        })
+        ->render();
 ```
 อืม... แต่นี้แหละครับ ไม่ต้องอธิบายเนาะ ผลลัพธ์ที่ได้เหมือน `Button` class ข้างบนนั่นทุกประการ
 
@@ -103,10 +103,10 @@ $btn = new Button([], 0);
 $btn->render(); // default
 
 $btn->editProps([
-    		'label' => "Don't click me!",
-    		'class' => 'btn-dont-click'
-    	])
-    	->render();
+        'label' => "Don't click me!",
+        'class' => 'btn-dont-click'
+    ])
+    ->render();
 ```
 HTML output:
 ```html
