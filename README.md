@@ -4,14 +4,14 @@
 
 การใช้งาน UI Factory จะแบ่งเป็น 2 ส่วนหลักนะครับ ส่วนแรกคือการ*สร้างและใช้งาน* component อีกส่วนคือการ*ปรับแต่ง* component ที่สร้างไว้
 
-### 1. การสร้างและใช้งาน component
+## 1. การสร้างและใช้งาน component
 เราสร้าง component ได้ 2 วิธี คือ:
 1. เขียน `class` ที่ `extends` `UIFactory\Component` `class` หรือ
 2. สร้าง `object` ใหม่จาก `Base` `class`
 
-#### 1.1 Extends `Component` class
+### 1.1 Extends `Component` class
 ลองมาดูภาพรวมของ `Button` component class ที่เขียนเสร็จแล้ว ใช้งานได้เลย กันก่อนครับ:
-```
+```php
 <?php
 
 namespace BootstrapUI;
@@ -28,14 +28,14 @@ class Button extends Component
 ```
 แค่นี้ละครับ ได้ละ basic component ที่ใช้ Bootstrap เป็น CSS library  
 แต่ถ้าจะเขียนแค่นี้ ไม่ต้องไป extends class อื่นให้วุ่นวายหรอกเนอะ จับ markup string ใส่ใน global function ก็ใช้ได้ละ:
-```
+```php
 function button() {
 	return '<button class="btn btn-primary">Click me!</button>';
 }
 ```
 
 งั้นเราลองมาดู `Button` class อีกอันข้างล่างนี้ครับ:
-```
+```php
 class Button extends Component
 {
 	private $props = [
@@ -60,7 +60,7 @@ HTML
 ดูแค่นี้ก็พอจะนึกออกแล้วใช่ไหมครับว่า `$props` กับ `markup` ทำงานร่วมกันยังไง เปรียบเทียบง่าย ๆ ได้ว่า `$props` คือโกดังเก็บอะไหล่แต่ง `markup` คือรถยนต์ และบางส่วนของรถยนต์ก็มีป้ายกำกับไว้ด้วยว่าจะใช้อะไหล่อันไหนในโกดังมาปรับแต่ง  
 เราทำแค่เอาอะไหล่ที่จะใช้มาเตรียมไว้ในโกดัง เอารถที่จะแต่งมา แล้วแปะ post-it ไว้ว่าจะให้เปลี่ยนอะไรตรงไหนบ้าง เท่านี้เอง ส่วนการถอดประกอบส่งมอบรถยนต์เป็นหน้าที่ของอู่หรือก็คือ UI Factory นั่นเองครับ  
 เวลาจะใช้ button นี้ก็แค่
-```
+```php
 <?php
 
 use BootstrapUI\Button;
@@ -72,8 +72,8 @@ HTML output:
 <button class="btn btn-primary">Click me!</button>
 ```
 
-#### 1.2 สร้าง object จาก `Base` class
-```
+### 1.2 สร้าง object จาก `Base` class
+```php
 <?php
 
 use UIFactory\Components\Base;
@@ -90,11 +90,11 @@ $button->addProps([
 ```
 อืม... แต่นี้แหละครับ ไม่ต้องอธิบายเนาะ ผลลัพธ์ที่ได้เหมือน `Button` class ข้างบนนั่นทุกประการ
 
-#### แล้วเมื่อไหร่ควร extends `Component` หรือสร้าง `Base` object?
+### แล้วเมื่อไหร่ควร extends `Component` หรือสร้าง `Base` object?
 
 
-### 2. การปรับแต่ง
-```
+## 2. การปรับแต่ง
+```php
 <?php
 
 use BootstrapUI\Button;
