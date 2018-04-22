@@ -11,7 +11,7 @@ use UIFactory\Helpers\ComponentAttribute;
 abstract class Component
 {
 	use ComponentAttribute;
-	
+
 	/**
 	 * @var array $props Array of default properties for building this component.
 	 */
@@ -43,9 +43,10 @@ abstract class Component
 	 */
 	protected static $configs = [
 		'PROP_VALIDATION' => false,
-		'PROP_CONTENT_SUFFIX' => 'Content',
-		'PROP_CONTENT_PREPEND_SUFFIX' => 'Before',
-		'PROP_CONTENT_APPEND_SUFFIX' => 'After'
+		'PROP_ELEMENT_CONTENT_SUFFIX' => 'Content',
+		'PROP_ELEMENT_SIBLING_PREVIOUS_SUFFIX' => 'Before',
+		'PROP_ELEMENT_SIBLING_NEXT_SUFFIX' => 'After',
+		'PROP_ELEMENT_ATTRIBUTE_SUFFIX' => 'Attr'
 	];
 
 	/**
@@ -67,7 +68,8 @@ abstract class Component
 	public function __construct(array $props = [], $echo = true)
 	{
 		$this->markupCallbacks[] = [$this, 'markup'];
-		$this->initContentSiblingProps($this->props);
+		$this->initHTMLElementSiblingProps($this->props);
+		$this->initHTMLElementAttributeProps($this->props);
 
 		if (! empty($props)) {
 			$this->editProps($props);
@@ -180,7 +182,7 @@ abstract class Component
 	 */
 	public function content(string $name, $content)
 	{
-		$this->props[$name . self::$configs['PROP_CONTENT_SUFFIX']] = $this->getClientContent($content);
+		$this->props[$name . self::$configs['PROP_ELEMENT_CONTENT_SUFFIX']] = $this->getClientContent($content);
 		return $this;
 	}
 
@@ -194,7 +196,7 @@ abstract class Component
 	 */
 	public function prepend(string $name, $content)
 	{
-		$this->injectContentSibling($name, $this->getClientContent($content), false);
+		$this->injectElementSibling($name, $this->getClientContent($content), false);
 		return $this;
 	}
 
@@ -208,7 +210,7 @@ abstract class Component
 	 */
 	public function append(string $name, $content)
 	{
-		$this->injectContentSibling($name, $this->getClientContent($content));
+		$this->injectElementSibling($name, $this->getClientContent($content));
 		return $this;
 	}
 
@@ -222,7 +224,7 @@ abstract class Component
 	 */
 	public function prependChild(string $name, $content)
 	{
-		$this->injectContentChild($name, $this->getClientContent($content), false);
+		$this->injectElementChild($name, $this->getClientContent($content), false);
 		return $this;
 	}
 
@@ -236,19 +238,19 @@ abstract class Component
 	 */
 	public function appendChild(string $name, $content)
 	{
-		$this->injectContentChild($name, $this->getClientContent($content));
+		$this->injectElementChild($name, $this->getClientContent($content));
 		return $this;
 	}
 
-	private function injectContentChild(string $name, $content, $append = true)
+	private function injectElementChild(string $name, $content, $append = true)
 	{
-		$prop =& $this->props[$name . self::$configs['PROP_CONTENT_SUFFIX']];
+		$prop =& $this->props[$name . self::$configs['PROP_ELEMENT_CONTENT_SUFFIX']];
 		$prop = $this->concatString($prop, $content, $append);
 	}
 
-	private function injectContentSibling(string $name, $content, $append = true)
+	private function injectElementSibling(string $name, $content, $append = true)
 	{
-		$suffix = $append ? 'PROP_CONTENT_APPEND_SUFFIX' : 'PROP_CONTENT_PREPEND_SUFFIX';
+		$suffix = $append ? 'PROP_ELEMENT_SIBLING_NEXT_SUFFIX' : 'PROP_ELEMENT_SIBLING_PREVIOUS_SUFFIX';
 
 		$prop =& $this->props[$name . self::$configs[$suffix]];
 		$prop = $this->concatString($prop, $content, $append);
@@ -266,25 +268,40 @@ abstract class Component
 					: $content;
 	}
 
-	protected function initContentSiblingProps($props)
+	protected function initHTMLElementSiblingProps($props)
 	{
-		$content_suffix_length = mb_strlen(self::$configs['PROP_CONTENT_SUFFIX']);
+		$content_suffix_length = mb_strlen(self::$configs['PROP_ELEMENT_CONTENT_SUFFIX']);
 
 		foreach ($props as $key => $value) {
 			$content_suffix = mb_substr($key, -$content_suffix_length, $content_suffix_length);
 
-			if ($content_suffix === self::$configs['PROP_CONTENT_SUFFIX']) {
+			if ($content_suffix === self::$configs['PROP_ELEMENT_CONTENT_SUFFIX']) {
 				$name = $this->extractPropContentName($key);
 
-				$this->props[$name . self::$configs['PROP_CONTENT_PREPEND_SUFFIX']] = '';
-				$this->props[$name . self::$configs['PROP_CONTENT_APPEND_SUFFIX']] = '';
+				$this->props[$name . self::$configs['PROP_ELEMENT_SIBLING_PREVIOUS_SUFFIX']] = '';
+				$this->props[$name . self::$configs['PROP_ELEMENT_SIBLING_NEXT_SUFFIX']] = '';
 			}
 		}
 	}
 
 	private function extractPropContentName($prop)
 	{
-		return mb_substr($prop, 0, mb_strlen($prop) - mb_strlen(self::$configs['PROP_CONTENT_SUFFIX']));
+		return mb_substr($prop, 0, mb_strlen($prop) - mb_strlen(self::$configs['PROP_ELEMENT_CONTENT_SUFFIX']));
+	}
+
+	private function initHTMLElementAttributeProps($props)
+	{
+		$attr_suffix_length = mb_strlen(self::$configs['PROP_ELEMENT_ATTRIBUTE_SUFFIX']);
+
+		foreach ($props as $key => $value) {
+			$attr_suffix = mb_substr($key, -$attr_suffix_length, $attr_suffix_length);
+
+			if ($attr_suffix === self::$configs['PROP_ELEMENT_ATTRIBUTE_SUFFIX']) {
+				$name = $this->extractPropContentName($key);
+
+				$this->props[$name . self::$configs['PROP_ELEMENT_SIBLING_PREVIOUS_SUFFIX']] = [];
+			}
+		}
 	}
 
 	/**

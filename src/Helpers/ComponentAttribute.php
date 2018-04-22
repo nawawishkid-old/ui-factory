@@ -1,6 +1,6 @@
 <?php
 
-namespace UIFactory\Helper;
+namespace UIFactory\Helpers;
 
 trait ComponentAttribute
 {
@@ -10,34 +10,36 @@ trait ComponentAttribute
 	 * @param array $attributes Array of HTML attributes e.g. ['class' => 'my-class']
 	 * @return Base
 	 */
-	public function addAttributes(array $attributes)
+	public function addAttributes(string $name, array $attributes)
 	{
-		if (isset($attributes['style'])) {
-			$attributes['style'] = $this->mergeStyleAttributes($attributes['style']);
-		}
+		$attr =& $this->props[$name . 'Attr'];
+		$attr = array_merge_recursive($attr, $attributes);
+		// if (isset($attributes['style'])) {
+		// 	$attributes['style'] = $this->mergeStyleAttributes($attributes['style']);
+		// }
 
-		if (isset($attributes['class'])) {
-			$attributes['class'] = $this->concatClassAttributes($attributes['class']);
-		}
+		// if (isset($attributes['class'])) {
+		// 	$attributes['class'] = $this->concatClassAttributes($attributes['class']);
+		// }
 
-		$this->attributes = array_merge($this->attributes, $attributes);
+		// $this->attributes = array_merge($this->attributes, $attributes);
 
 		return $this;
 	}
 
-	protected function mergeStyleAttributes(array $style)
-	{
-		$default_style = isset($this->attributes['style']) ? $this->attributes['style'] : [];
-		$default_style = is_array($default_style) ? $default_style : [];
+	// protected function mergeStyleAttributes(array $style)
+	// {
+	// 	$default_style = isset($this->attributes['style']) ? $this->attributes['style'] : [];
+	// 	$default_style = is_array($default_style) ? $default_style : [];
 
-		return array_merge($default_style, $style);
-	}
+	// 	return array_merge($default_style, $style);
+	// }
 
-	protected function concatClassAttributes(string $class)
-	{
-		$default_class = isset($this->attributes['class']) ? $this->attributes['class'] : '';
-		return $default_class . ' ' . $class;
-	}
+	// protected function concatClassAttributes(string $class)
+	// {
+	// 	$default_class = isset($this->attributes['class']) ? $this->attributes['class'] : '';
+	// 	return $default_class . ' ' . $class;
+	// }
 
 	/**
 	 * Get inline HTML attribute key-value e.g. style="background:red;"
