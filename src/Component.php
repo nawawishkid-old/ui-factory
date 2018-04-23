@@ -78,6 +78,10 @@ abstract class Component
 
 	public function __get($name)
 	{
+		if ($name === 'html') {
+			return $this->html;
+		}
+		
 		return isset($this->props[$name]) ? $this->props[$name] : null;
 	}
 
