@@ -51,4 +51,21 @@ class BaseTest extends TestCase
 
 		$this->assertEquals($label, $base->label);
 	}
+
+	public function testCanAddMultipleProps()
+	{
+		$label = "Don't click me!";
+		$class = "btn btn-primary";
+
+		$base = new Base();
+		$base->addMarkup(function ($props) {
+			return "<button class=\"$props->class\">$props->label</button>";
+		})->addProps([
+			'label' => $label,
+			'class' => $class
+		]);
+
+		$this->assertEquals($label, $base->label);
+		$this->assertEquals($class, $base->class);
+	}
 }
