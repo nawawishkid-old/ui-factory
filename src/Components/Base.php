@@ -12,11 +12,6 @@ class Base extends Component
 		return '';
 	}
 
-	public function __get($name)
-	{
-		return $this->helpers[$name];
-	}
-
 	public function addMarkup(callable $callback)
 	{
 		$this->markupCallbacks[] = $callback;
