@@ -49,6 +49,6 @@ class BaseTest extends TestCase
 			'label' => $label
 		]);
 
-		$this->assertEquals("<button>$label</button>", $base->get());
+		$this->assertEquals($label, $base->label);
 	}
 }
