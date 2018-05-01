@@ -2,6 +2,8 @@
 
 **I read about 'Abstract factory pattern' and ended up making this repo :D**  
 
+Download via composer `composer require nawawishkid/ui-factory:dev-master`
+
 เครื่องมือที่จะช่วยให้เราสามารถเขียน user interface component เก็บไว้ใช้ซ้ำได้ และยังสามารถปรับแต่ง component ที่สร้างไว้ได้อย่างไร้ขีดจำกัด เช่น เราเขียน card component แต่ตอนเอาไปใช้ซ้ำ เราอาจจะเปลี่ยนให้มันกลายเป็น button ก็ยังได้ (คงไม่มีใครทำอ่ะครับ แค่ยกตัวอย่างเฉย ๆ) ความยืดหยุ่นในการปรับแต่งจะมากน้อยแค่ไหนก็ขึ้นอยู่กับเราจะเขียน component ไว้ยังไง  
 
 การใช้งาน UI Factory จะแบ่งเป็น 2 ส่วนหลักนะครับ ส่วนแรกคือการ ***สร้างและใช้งาน*** component อีกส่วนคือการ ***ปรับแต่ง*** component ที่สร้างไว้
