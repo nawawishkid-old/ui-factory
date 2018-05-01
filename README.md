@@ -114,3 +114,7 @@ HTML output:
 <button class="btn btn-primary btn-dont-click">Don't click me!</button>
 ```
 ยิ่ง `$props` เยอะ ยิ่งแต่งได้เยอะ period! 555
+
+
+## Future feature
+- [ ] Able to reset props to its default
